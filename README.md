@@ -1,7 +1,7 @@
 # demultiplexer-wallet
 one (wallet) to many (wallets) transfer capability smart contract, on Starknet L2
 
-<img src="demultiplexer_app/resources/demultiplexer.png" width="100">
+<img src="demultiplexer_app/resources/demultiplexer.png" width="400">
 
 
 ## Trying to achieve the following:
