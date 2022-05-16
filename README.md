@@ -8,21 +8,21 @@ one (wallet) to many (wallets) transfer capability smart contract, on Starknet L
 With this wallet we can connect a wallet and input some configurations to the Demux-Wallet to be able to send to multiple receiving wallets to either eth, ERC20 or ERC721 based on an event configuration (either a manual triggered event or time based event), as well as potentially supporting recurring transactions.
 
 ### Sending wallet: must contain funds
-# H1 Configuration: 
-# H2 Number of outputs: 
-# H3 the number of receiving wallets or addresses tbd
-# H2 weights: 
-# H3 a weight/percentage to each receiving wallet (the weights/percentage sum should be less than 1/100% for all transactions, tbd: maybe not necessarily including securing transactions)
-# H2 outputs: 
-# H3 wallets addresses if known to start with, then possibly support creating of wallets dynamically 
-# H2 multisig: 
-# H3 once the user created a new Demux-wallet with pending transactions, we need a way to unlock the funds in case we want to cancel or retrieve the funds if the user is not available anymore to avoid permanent loss we might need a secondary wallet address to divert the funds to
-# H2 Event is defined by two properties
-# H3 eventType: at the moment there are two type of events, one shot or recurring
-# H3 enventSchedule: instant or delayed
-# H2 Cancel: 
-# H3 Event? Nuke the transaction, voluntary from the user, 
-# H3 ExpiryDate
+#### Configuration: 
+##### Number of outputs: 
+###### the number of receiving wallets or addresses tbd
+##### weights: 
+###### a weight/percentage to each receiving wallet (the weights/percentage sum should be less than 1/100% for all transactions, tbd: maybe not necessarily including securing transactions)
+##### outputs: 
+###### wallets addresses if known to start with, then possibly support creating of wallets dynamically 
+##### multisig: 
+###### once the user created a new Demux-wallet with pending transactions, we need a way to unlock the funds in case we want to cancel or retrieve the funds if the user is not available anymore to avoid permanent loss we might need a secondary wallet address to divert the funds to
+##### Event is defined by two properties
+###### eventType: at the moment there are two type of events, one shot or recurring
+###### enventSchedule: instant or delayed
+##### Cancel: 
+###### Event? Nuke the transaction, voluntary from the user, 
+###### ExpiryDate
 
 
 
