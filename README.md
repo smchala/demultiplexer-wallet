@@ -5,7 +5,6 @@ one (wallet) to many (wallets) transfer capability smart contract, on Starknet L
 
 
 ## Goal:
-======
 
 
 With this wallet we can connect a wallet and input some configurations to the Demux-Wallet to be able to send to multiple receiving wallets to either eth, ERC20 or ERC721 based on an event configuration (either a manual triggered event or time based event), as well as potentially supporting recurring transactions.
@@ -29,7 +28,6 @@ With this wallet we can connect a wallet and input some configurations to the De
 
 
 ## 1st steps
-======
 
 - Learn Cairo, tut
 - Env
@@ -49,7 +47,7 @@ Then we should be in business,
 
 
 ## Need to check EIP-4626: Tokenized Vault Standard 
-======
+
 
 ### Playing with POC:
 
