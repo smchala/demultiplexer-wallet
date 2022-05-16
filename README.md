@@ -10,7 +10,6 @@ one (wallet) to many (wallets) transfer capability smart contract, on Starknet L
 
 With this wallet we can connect a wallet and input some configurations to the Demux-Wallet to be able to send to multiple receiving wallets to either eth, ERC20 or ERC721 based on an event configuration (either a manual triggered event or time based event), as well as potentially supporting recurring transactions.
 
-## Sending wallet: must contain funds
 ### Configuration: 
 #### Number of outputs: 
 ##### - the number of receiving wallets or addresses tbd
