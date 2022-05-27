@@ -6,25 +6,58 @@ one (wallet) to many (wallets) transfer capability smart contract, on Starknet L
 
 
 ## Goal:
+#### Configuration: 
 
-
-With this wallet we can connect a wallet and input some configurations to the Demux-Wallet to be able to send to multiple receiving wallets to either eth, ERC20 or ERC721 based on an event configuration (either a manual triggered event or time based event), as well as potentially supporting recurring transactions.
-
-### Configuration: 
-#### Number of outputs: 
-##### - the number of receiving wallets or addresses tbd
-#### weights: 
-##### - a weight/percentage to each receiving wallet (the weights/percentage sum should be less than 1/100% for all transactions, tbd: maybe not necessarily including securing transactions)
-#### outputs: 
-##### - wallets addresses if known to start with, then possibly support creating of wallets dynamically 
+##### weights: 
+- a weight/percentage to each receiving wallet (the weights/percentage sum should be less than 1/100% for all transactions, tbd: maybe not necessarily including securing transactions)
+#### recipients: 
+- wallets addresses if known to start with, then possibly support creating of wallets dynamically 
+- weight for each address, how much of the total amout will be allocated to this address
 #### multisig: 
-##### - once the user created a new Demux-wallet with pending transactions, we need a way to unlock the funds in case we want to cancel or retrieve the funds if the user is not available anymore to avoid permanent loss we might need a secondary wallet address to divert the funds to
-#### Event is defined by two properties
-##### - eventType: at the moment there are two type of events, one shot or recurring
-##### - enventSchedule: instant or delayed
+- once the user created a new Demux-wallet with pending transactions, we need a way to unlock the funds in case we want to cancel or retrieve the funds if the user is not available anymore to avoid permanent loss we might need a secondary wallet address to divert the funds to
+#### Events are defined by two properties
+- eventType: at the moment there are two type of events, one shot or recurring
+- enventSchedule: instant or delayed
 #### Cancel: 
-##### - Event? Nuke the transaction, voluntary from the user
-##### - ExpiryDate
+- Event? Nuke the transaction, voluntary from the user, only for delayed transaction
+- ExpiryDate
+
+Example
+```{
+   "configuration":{
+      "send_amount":3,
+      "send_type":"coin",
+      "recurring":{
+         "value":0,
+         "period":0
+      },
+      "equal_weights":1,
+      "multisig":0,
+      "cancel":{
+         "is_manual":1,
+         "expiry_date":1234567
+      },
+      "recipients":[
+         {
+            "address":"0x",
+            "weight":1,
+            "delay":0
+         },
+         {
+            "address":"0x",
+            "weight":1,
+            "delay":0
+         },
+         {
+            "address":"0x",
+            "weight":1,
+            "delay":0
+         }
+      ]
+   }
+}
+```
+
 
 
 ## 1st steps
