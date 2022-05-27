@@ -1,0 +1,35 @@
+-------------------------------------------------------------------
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 yield-wallet-cairo % starknet deploy --contract contract_compiled.json                 
+Deploy transaction was sent.
+Contract address: 0x013ad5814556bab5d5f9a6914c51c296af493b2eb86af6a814f5d3420c97d4f4
+Transaction hash: 0x554a50e6a2dd1b7c02f3184b1c3b44d496c81ef559bc917bebb08f5bdd59402
+
+-------------------------------------------------------------------
+starknet invoke \
+    --address 0x013ad5814556bab5d5f9a6914c51c296af493b2eb86af6a814f5d3420c97d4f4 \
+    --abi contract_abi.json \
+    --function increase_balance \
+    --inputs 1234
+
+
+    starknet tx_status --hash 0x554a50e6a2dd1b7c02f3184b1c3b44d496c81ef559bc917bebb08f5bdd59402
+
+
+
+    (cairo_venv) samimchala@Samis-MacBook-Pro-2 yield-wallet-cairo %     starknet tx_status --hash 0x554a50e6a2dd1b7c02f3184b1c3b44d496c81ef559bc917bebb08f5bdd59402 
+{
+    "block_hash": "0x306d3a6ea7b92cda36e22583219cb2979565a672d3b7b84d59352b4b0f8341e",
+    "tx_status": "ACCEPTED_ON_L2"
+}
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 yield-wallet-cairo % starknet invoke \
+    --address 0x013ad5814556bab5d5f9a6914c51c296af493b2eb86af6a814f5d3420c97d4f4 \
+    --abi contract_abi.json \
+    --function increase_balance \
+    --inputs 1234
+Got BadRequest while trying to access https://alpha4.starknet.io/feeder_gateway/estimate_fee?blockNumber=null. Status code: 500; text: {"code": "StarknetErrorCode.ENTRY_POINT_NOT_FOUND_IN_CONTRACT", "message": "Entry point 0x15d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad not found in contract with address 0x711412af5ff118e5af2083d6fae17e42d6ca992283390e226199ace24e4cd14."}.
+Traceback (most recent call last):
+  File "/Users/samimchala/cairo_venv/lib/python3.8/site-packages/services/external_api/base_client.py", line 120, in _send_request
+    raise BadRequest(status_code=response.status, text=text)
+services.external_api.base_client.BadRequest: HTTP error ocurred. Status: 500. Text: {"code": "StarknetErrorCode.ENTRY_POINT_NOT_FOUND_IN_CONTRACT", "message": "Entry point 0x15d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad not found in contract with address 0x711412af5ff118e5af2083d6fae17e42d6ca992283390e226199ace24e4cd14."}
+Error: BadRequest: HTTP error ocurred. Status: 500. Text: {"code": "StarknetErrorCode.ENTRY_POINT_NOT_FOUND_IN_CONTRACT", "message": "Entry point 0x15d40a3d6ca2ac30f4031e42be28da9b056fef9bb7357ac5e85627ee876e5ad not found in contract with address 0x711412af5ff118e5af2083d6fae17e42d6ca992283390e226199ace24e4cd14."}
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 yield-wallet-cairo % 

@@ -1,0 +1,233 @@
+https://github.com/OpenZeppelin/nile
+
+
+
+
+nile compile 
+
+for testing:
+python3 -m pytest tests/test_contract.py
+
+-------------------------------------------------------------------
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy contract --alias contract
+🚀 Deploying contract
+⏳ ️Deployment of contract successfully sent at 0x0225d78aa35364b8c4ce185b41b76730ce161df64b1f21cd8768e030dbcd44cf
+🧾 Transaction hash: 0x72862bdb90b771ac08c1eb1a64c67060c59d83e387572b81c438fcafa3bc5fe
+📦 Registering deployment as contract in 127.0.0.1.deployments.txt
+
+-------------------------------------------------------------------
+(env) samimchala@Samis-MacBook-Pro-2 myproject % export PKEY1=1234
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile setup PKEY1  
+🚀 Deploying Account
+⏳ ️Deployment of Account successfully sent at 0x00f966fc70311e56e7c28996efc27ff241c93c35024d750bc2b6ca6bff1d2651
+🧾 Transaction hash: 0x41182c365f471f5f1fd02447e47d0f3125377c10d6f82e7ecf401afad33fcdc
+📦 Registering deployment as account-0 in 127.0.0.1.deployments.txt
+
+-------------------------------------------------------------------
+nile invoke contract increase_balance 1234
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile invoke contract increase_balance 1234
+
+Invoke transaction was sent.
+Contract address: 0x0225d78aa35364b8c4ce185b41b76730ce161df64b1f21cd8768e030dbcd44cf
+Transaction hash: 0x4f9ce3c81159cc7e0676a04c621a41e97f39efcb8353665ec8b820030eef89f
+
+-------------------------------------------------------------------
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile call contract get_balance
+1234
+
+BOOM!!!
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+
+
+GOERLI
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy contract --alias contract --network goerli
+🚀 Deploying contract
+⏳ ️Deployment of contract successfully sent at 0x03661622db536c7d8367074211da6bbe1ef0f6471d164144e2190fded81e0b8e
+🧾 Transaction hash: 0x75557f862f851a86ea72cf474bd5501145e121f78109689a4af72924220c7e8
+📦 Registering deployment as contract in goerli.deployments.txt
+
+
+-------------------------------------------------------------------
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile invoke contract increase_balance 1234 --network goerli
+Invoke transaction was sent.
+Contract address: 0x03661622db536c7d8367074211da6bbe1ef0f6471d164144e2190fded81e0b8e
+Transaction hash: 0x3b3ce96f06fef850b5799c47fd807f0dcee3dd833be6c67a96c88bc9e348061
+
+-------------------------------------------------------------------
+starknet tx_status \
+  --hash 0x3b3ce96f06fef850b5799c47fd807f0dcee3dd833be6c67a96c88bc9e348061 \
+  --error_message
+
+
+
+ nile call contract get_balance --network goerli
+0
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy one_to_one --alias one_contract --network goerli
+🚀 Deploying one_to_one
+⏳ ️Deployment of one_to_one successfully sent at 0x01f43d77d5b4f4b9b8e2282230a1cc231d6153bf5bc27b696924ef65c82c7dfa
+🧾 Transaction hash: 0x577d3c1c2a717c22bc204a32f04b0dc0899a7531b9ebf3da455e03a454319dd
+📦 Registering deployment as one_contract in goerli.deployments.txt
+
+
+nile call one_contract get_pt --network goerli
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy one_to_one --alias two_contract --network goerli               
+🚀 Deploying one_to_one
+⏳ ️Deployment of one_to_one successfully sent at 0x073e01038ce26a55781f13c1669efa6a3ad31784b7777bfdd29a271add7abb3b
+🧾 Transaction hash: 0x62c1a6f30bf73130ca3638be9990a69c469718c3746c15dd9ea324194479fd3
+📦 Registering deployment as two_contract in goerli.deployments.txt
+
+
+nile call two_contract get_configuration --network goerli
+nile call two_contract get_output_options --network goerli
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy one_to_one --alias 5_contract --network goerli
+🚀 Deploying one_to_one
+⏳ ️Deployment of one_to_one successfully sent at 0x028b26f0adf647023344821a2b397a0c51a2cc822ea470e20bdeb4f91a9378d1
+🧾 Transaction hash: 0x3fa75ae9b2cdcc757ff49d4eec2954b2a23294853789d86ad8d242553e3865d
+📦 Registering deployment as 5_contract in goerli.deployments.txt
+
+
+local
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy one_to_one --alias 5_contract                 
+🚀 Deploying one_to_one
+⏳ ️Deployment of one_to_one successfully sent at 0x0702acc18472fed23a100bdfa3468548aaf8d46fdc98b1ed53cbb7824bc50fad
+🧾 Transaction hash: 0x1559f2a8ecdc49ca5b9e66ca2cc6ee23232445c2c7e62bd9c5b22e3a127046b
+📦 Registering deployment as 5_contract in 127.0.0.1.deployments.txt
+
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy one_to_one --alias my_contract --network goerli
+🚀 Deploying one_to_one
+⏳ ️Deployment of one_to_one successfully sent at 0x03560665bfeae9497c07a5c5f7bb1ffca31b850e1f97e1e2461145800255b2ae
+🧾 Transaction hash: 0x535d9dbcc64b8a300ad18e6ef02dec67f8a350655dd5d91f1d4d46552a9c111
+📦 Registering deployment as my_contract in goerli.deployments.txt
+
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli
+🚀 Deploying oneToOneAccount
+⏳ ️Deployment of oneToOneAccount successfully sent at 0x0112c6a4d8f3fc1a59581c5e8810e7702b6ce19db8c5eb6c8b6f40df4e6d222d
+🧾 Transaction hash: 0x3e6ebe81abe70c91c07fedb0fc962bc524eb0f8071084aca53199ebc2dc19ca
+📦 Registering deployment as 1_contract in goerli.deployments.txt
+
+nile debug 0x3e6ebe81abe70c91c07fedb0fc962bc524eb0f8071084aca53199ebc2dc19ca --network goerli
+
+
+deployed but can t see on voyager
+0x0534dd8e78c57d362a5d0bca50f53f3a4697d0c57e5dc49c8e11cc76ec14a09c
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x04890d6c8a5466a6b05951fb748bc3c723bc5a222045fafdfb1e6b5b7139cdcc
+🧾 Transaction hash: 0x7f5bd4bcfa51b60bbc8f41b795d5153f91426c93e57ddad1a787321305dc7dc
+📦 Registering deployment as demux in goerli.deployments.txt
+
+nile debug 0x7f5bd4bcfa51b60bbc8f41b795d5153f91426c93e57ddad1a787321305dc7dc --network goerli
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+
+local
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x078dc6943addd6f145be32bf870bcbeed870bbe1d50631ccfe664ee49e13ace8
+🧾 Transaction hash: 0x5c5ca925e5ead4876ba87049893e2bb08c68dd86d73b199ca3b298d5ccb14a2
+
+nile debug 0x5c5ca925e5ead4876ba87049893e2bb08c68dd86d73b199ca3b298d5ccb14a2 
+
+
+nile invoke demux convertToConfiguration 55
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux                                              
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x04e75dd0188065580a9017f131c03c4f4194ae64d277aa154e6da4e06b8a685c
+🧾 Transaction hash: 0x155a9d9b401a6be8000c97e6a9d79718ced61dd72628007aca818cde4fa2ad7
+
+nile debug 0x5c5ca925e5ead4876ba87049893e2bb08c68dd86d73b199ca3b298d5ccb14a2 
+
+
+nile invoke 0x04e75dd0188065580a9017f131c03c4f4194ae64d277aa154e6da4e06b8a685c convert_to_configuration 55
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+goerli
+
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli                                              
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x07dd8a55ad3aa3c19b9c2678c20e357e42c5d051e60b540890bc957c7db49988
+🧾 Transaction hash: 0x37a0208997938063c4072b2f932e41e9b1abe38031bebf2eefa7d568a7a0e58
+📦 Registering deployment as demux in goerli.deployments.txt
+
+nile debug 0x37a0208997938063c4072b2f932e41e9b1abe38031bebf2eefa7d568a7a0e58 --network goerli 
+
+nile call 0x07dd8a55ad3aa3c19b9c2678c20e357e42c5d051e60b540890bc957c7db49988 convert_to_configuration 55
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+goerli
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli 
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x03338f801dc0e47807c01699439e9c1772be74734d4c797388b5f9fe9049135f
+🧾 Transaction hash: 0x554d3456bb2df4db2990b4e7f3c4ced13824618b0628021787761a512c5360
+📦 Registering deployment as demux in goerli.deployments.txt
+
+
+nile debug 0x554d3456bb2df4db2990b4e7f3c4ced13824618b0628021787761a512c5360 --network goerli 
+
+nile call 0x03338f801dc0e47807c01699439e9c1772be74734d4c797388b5f9fe9049135f convert_to_configuration 55
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+goerli
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli                                             
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x064286117660ec5c8940e6b34486832688b61e5590d60b9fcf1a75b517cbb9cb
+🧾 Transaction hash: 0x10732a42a84d07c99fb2db0f2afcfa2bfe40c481c4def1400b931303824584e
+📦 Registering deployment as demux in goerli.deployments.txt
+
+
+nile debug 0x10732a42a84d07c99fb2db0f2afcfa2bfe40c481c4def1400b931303824584e --network goerli 
+
+nile invoke 0x064286117660ec5c8940e6b34486832688b61e5590d60b9fcf1a75b517cbb9cb convert_to_configuration 55
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+goerli
+
+(env) samimchala@Samis-MacBook-Pro-2 myproject % nile deploy demux --alias demux --network goerli                                              
+🚀 Deploying demux
+⏳ ️Deployment of demux successfully sent at 0x05c877f8f4d73e371600f378469bfa9ebabc23370706672044dfd08f46ebed2b
+🧾 Transaction hash: 0x72939388792d34cd39dd1ab5bb85a7ca7dc104de4f098530f0454df7cd70c8f
+📦 Registering deployment as demux in goerli.deployments.txt
+
+nile debug 0x72939388792d34cd39dd1ab5bb85a7ca7dc104de4f098530f0454df7cd70c8f --network goerli 

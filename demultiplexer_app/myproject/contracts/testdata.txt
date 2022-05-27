@@ -1,0 +1,18 @@
+# example of recipients details
+# smchala@hotmail.com -> 736d6368616c6140686f746d61696c2e636f6d
+# sami mchala -> 73616d69206d6368616c61
+# sami@otssso.com -> 73616d69406f747373736f2e636f6d
+
+# smchala@hotmail.com -> 736d6368616c6140686f746d61696c2e636f6d
+# sami mchala -> 73616d69206d6368616c61
+# sami@otssso.com -> 73616d69406f747373736f2e636f6d
+# recipient_wallet_1 = RecipientWallet(
+#     address=0x062e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, weight=1, value=0)
+# recipient_wallet_2 = RecipientWallet(
+#     address=0x032e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, weight=1, value=0)
+
+# recipient1 = Recipient(name=0x73616d69206d6368616c61,
+#                        email=0x736d6368616c6140686f746d61696c2e636f6d, recipientWallet=recipient_wallet_1)
+# recipient2 = Recipient(name=0x73616d69206d6368616c61,
+#                        email=0x73616d69406f747373736f2e636f6d, recipientWallet=recipient_wallet_2)
+# Invoke set_recipients() twice.

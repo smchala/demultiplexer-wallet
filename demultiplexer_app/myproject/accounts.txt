@@ -1,0 +1,60 @@
+starknet deploy_account --account=xxxtesting
+
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x062e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd
+Public key: 0x00fc003e419fe165829fbd4b40897fc21eb3fcf3d3637c3a6c437b97d82465de
+Transaction hash: 0x16281e199733fc1c4934bccc5105f850a78f7d5a37a51ed004e482a5b1ad567
+
+
+-------------------------------------------------------------------------------
+
+samimchala@Samis-MacBook-Pro-2 11may22_2 % starknet deploy_account --account=sami_test_account
+
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x0156ce468c1d0d7fafb434cddbbcc7e9159ff69dd9f50a2179e59bd4a68c9bf9
+
+Public key: 0x0190f465e6e83c9e83d9f8b139841a6c988a7d59ffad1a4095d03ed42ca3aeeb
+Transaction hash: 0x367a741cab200b013437e091d417ae40d128f7fce0adfd0a6788ed22e40ea72
+
+
+-------------------------------------------------------------------------------
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 11may22_3 % starknet deploy_account --account=sami_demux_wallet
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x06332fe06359ad114274cd83258531019164580a9e7e733380d396a91f330815
+Public key: 0x0700eff4c0f8487bdd0c0acb6578704b7cc8353695a8ebe7b8b264a286af5826
+Transaction hash: 0x7f6201e17d140f26c5c020cfd24b312adcfc4c1a216514de21056058cb2e326
+-------------------------------------------------------------------------------
+(cairo_venv3.7) samimchala@Samis-MacBook-Pro-2 12may22 % starknet deploy_account --account=sami_12may_account
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x0646dc2121496001e247fe73f22f368cc66029e8cf85cdf00c489abc4acd1045
+Public key: 0x03ec073eb61850b61be235e8cd4e3bdd9090ad9babaf6efe10cb84d9f9a426db
+Transaction hash: 0x74ba00d86dd7c0f2c5da532f16fb622e9d3a0b78df56839942bd6c5490f68fd
+
+-------------------------------------------------------------------------------
+starknet deploy_account --account=poc_wallet
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x0760e8c246603274afdbfb190032b6a7bf080e7471252edebc37922d52edc396
+Public key: 0x0264f163caaa76b73df0697413352ea5949c36e3e05554d6b0ff9f72849212a5
+Transaction hash: 0x25fb5f2105698f47d2f6054447619e01e5d0ace017d2c49d8cdb127151e84db
+
+-------------------------------------------------------------------------------
