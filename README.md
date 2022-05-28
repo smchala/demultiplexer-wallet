@@ -65,7 +65,7 @@ Example
 - Learn Cairo, tut
 - Env
 - 1st steps for poc
-- Create wallet that user can input all config
+- Create wallet that user can input all config x
 - Check for funds are enough to cover what the user chose to send
 - Validate all configs, weights….
 - Store all into the contract
@@ -77,18 +77,4 @@ Example
 - Obviously test the shit out of ^^
 
 Then we should be in business,
-
-
-## Need to check EIP-4626: Tokenized Vault Standard 
-
-
-### Playing with POC:
-
-- Set total amount to send
-- Set addresses to send to
-- Add weight for each wallet (equal for each or not)
-- One off shot/ recurring
-- Date to send it
-- Expiry date
-
 
