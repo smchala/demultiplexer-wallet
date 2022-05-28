@@ -29,7 +29,7 @@ class TestData():
 
     def get_recipient1(contract):
         return contract.set_recipients(
-            name=0x736d6368616c6140686f746d61696c2e636f6d,
+            wallet_name=0x736d6368616c6140686f746d61696c2e636f6d,
             email=0x73616d69406f747373736f2e636f6d,
             address=0x032e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd,
             weight=1,
@@ -41,7 +41,7 @@ class TestData():
 
     def get_recipient2(contract):
         return contract.set_recipients(
-            name=0x736d6368616c6140686636f6d,
+            wallet_name=0x736d6368616c6140686636f6d,
             email=0x73616d69406f747373736f2e636f6d,
             address=0x045e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd,
             weight=1,

@@ -13,7 +13,7 @@ from starkware.starknet.common.syscalls import (
 )
 
 using RecipientWallet = (address : felt, weight : felt, value : felt)
-using Recipient = (name : felt, email : felt, recipientWallet : RecipientWallet, recuring_value : felt, recuring_period : felt, transaction_delay : felt)
+using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_value : felt, recuring_period : felt, transaction_delay : felt)
 using Configuration = (send_amount : felt, send_type : felt, recuring_value : felt, recuring_period : felt, equal_weights : felt, multi_sig : felt, transaction_delay : felt, expiry_date : felt)
 
 @storage_var
@@ -45,14 +45,13 @@ end
 func balance() -> (res : felt):
 end
 
-# TODO: name-> hould be renmed to wallet name
 # TODO: email-> might need to pass it as a blob, pgp maybe? dont want spamming :)
 @external
 func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt,
     weight : felt,
     value : felt,
-    name : felt,
+    wallet_name : felt,
     email : felt,
     recuring_value : felt,
     recuring_period : felt,
@@ -61,7 +60,7 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     alloc_locals
     let (last_index) = recipients_number.read()
     local new_recipients_wallet : RecipientWallet = (address=address, weight=weight, value=value)
-    local new_recipients : Recipient = (name=name, email=email, recipientWallet=new_recipients_wallet, recuring_value=recuring_value, recuring_period=recuring_period, transaction_delay=transaction_delay)
+    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, recipientWallet=new_recipients_wallet, recuring_value=recuring_value, recuring_period=recuring_period, transaction_delay=transaction_delay)
     recipients.write(wallet_number=last_index, value=new_recipients)
     # keep track of recipients
     recipients_number.write(last_index + 1)

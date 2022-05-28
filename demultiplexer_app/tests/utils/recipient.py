@@ -13,8 +13,8 @@ class RecipientWallet():
 
 class Recipient():
 
-    def __init__(self, _name, _email, _recipient_wallet, _recuring_value, _recuring_period, _transaction_delay):
-        self.name = _name
+    def __init__(self, _wallet_name, _email, _recipient_wallet, _recuring_value, _recuring_period, _transaction_delay):
+        self.wallet_name = _wallet_name
         self.email = _email
         self.recipient_wallet = _recipient_wallet
         self.recuring_value = _recuring_value
@@ -22,7 +22,7 @@ class Recipient():
         self.transaction_delay = _transaction_delay
 
     def __eq__(self, other):
-        return self.name == other.name and \
+        return self.wallet_name == other.wallet_name and \
             self.email == other.email and \
             self.recipient_wallet == other.recipient_wallet and \
             self.recuring_value == other.recuring_value and \

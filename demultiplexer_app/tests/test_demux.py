@@ -46,7 +46,7 @@ async def test_can_get_a_specific_recipient():
     # Check the result of get_recipient() for 1st added wallet.
     execution_info = await contract.get_recipient(wallet_number=0).call()
 
-    assert execution_info.result[0][0] == TestData.recipient1.name
+    assert execution_info.result[0][0] == TestData.recipient1.wallet_name
     assert execution_info.result[0][1] == TestData.recipient1.email
     assert execution_info.result[0][2][0] == TestData.recipient1.recipient_wallet.address
     assert execution_info.result[0][2][1] == TestData.recipient1.recipient_wallet.weight
@@ -58,7 +58,7 @@ async def test_can_get_a_specific_recipient():
     # Check the result of get_recipient() for 1st added wallet.
     execution_info = await contract.get_recipient(wallet_number=1).call()
 
-    assert execution_info.result[0][0] == TestData.recipient2.name
+    assert execution_info.result[0][0] == TestData.recipient2.wallet_name
     assert execution_info.result[0][1] == TestData.recipient2.email
     assert execution_info.result[0][2][0] == TestData.recipient2.recipient_wallet.address
     assert execution_info.result[0][2][1] == TestData.recipient2.recipient_wallet.weight

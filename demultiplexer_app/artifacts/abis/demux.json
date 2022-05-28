@@ -14,7 +14,7 @@
                 "type": "felt"
             },
             {
-                "name": "name",
+                "name": "wallet_name",
                 "type": "felt"
             },
             {
@@ -49,7 +49,7 @@
         "outputs": [
             {
                 "name": "recepients",
-                "type": "(name : felt, email : felt, recipientWallet : (address : felt, weight : felt, value : felt), recuring_value : felt, recuring_period : felt, transaction_delay : felt)"
+                "type": "(wallet_name : felt, email : felt, recipientWallet : (address : felt, weight : felt, value : felt), recuring_value : felt, recuring_period : felt, transaction_delay : felt)"
             }
         ],
         "stateMutability": "view",
@@ -86,60 +86,36 @@
                 "type": "felt"
             },
             {
-                "name": "expiry_date",
+                "name": "send_type",
                 "type": "felt"
             },
             {
-                "name": "configuration_code",
+                "name": "recuring_value",
+                "type": "felt"
+            },
+            {
+                "name": "recuring_period",
+                "type": "felt"
+            },
+            {
+                "name": "equal_weights",
+                "type": "felt"
+            },
+            {
+                "name": "multi_sig",
+                "type": "felt"
+            },
+            {
+                "name": "transaction_delay",
+                "type": "felt"
+            },
+            {
+                "name": "expiry_date",
                 "type": "felt"
             }
         ],
         "name": "set_configuration",
         "outputs": [],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "decimal",
-                "type": "felt"
-            }
-        ],
-        "name": "convert_to_configuration",
-        "outputs": [
-            {
-                "name": "a",
-                "type": "felt"
-            },
-            {
-                "name": "b",
-                "type": "felt"
-            },
-            {
-                "name": "c",
-                "type": "felt"
-            },
-            {
-                "name": "d",
-                "type": "felt"
-            },
-            {
-                "name": "e",
-                "type": "felt"
-            },
-            {
-                "name": "f",
-                "type": "felt"
-            },
-            {
-                "name": "g",
-                "type": "felt"
-            },
-            {
-                "name": "h",
-                "type": "felt"
-            }
-        ],
         "type": "function"
     },
     {
