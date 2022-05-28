@@ -45,6 +45,8 @@ end
 func balance() -> (res : felt):
 end
 
+# TODO: name-> hould be renmed to wallet name
+# TODO: email-> might need to pass it as a blob, pgp maybe? dont want spamming :)
 @external
 func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt,
