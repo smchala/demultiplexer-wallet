@@ -1,0 +1,93 @@
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % export STARKNET_NETWORK=alpha-goerli
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet deploy_account --account=001
+Sent deploy account contract transaction.
+
+NOTE: This is a modified version of the OpenZeppelin account contract. The signature is computed
+differently.
+
+Contract address: 0x076f2c13089207804b949627193542cf644a09c33e565c569b244081ba12b6c0
+Public key: 0x044d60a3e840b7abfced9e67ca1a4b9ca1ccea7fb9c0e7c71312fac0f4816c12
+Transaction hash: 0x1005f815a2c118c87bb039d052667464f9b32f217bdbbcbfe832ad3e153ea72
+
+
+starknet-compile contract.cairo \
+    --output contract_compiled.json \
+    --abi contract_abi.json
+
+
+export STARKNET_NETWORK=alpha-goerli
+
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet deploy --contract contract_compiled.json
+
+Deploy transaction was sent.
+Contract address: 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353
+Transaction hash: 0x197e294aec7524d1d8340869cf790fb288cf089c161d96fb795413ddf8d9ee5
+
+
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet tx_status --hash 0x197e294aec7524d1d8340869cf790fb288cf089c161d96fb795413ddf8d9ee5
+{
+    "tx_status": "RECEIVED"
+}
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet tx_status --hash 0x197e294aec7524d1d8340869cf790fb288cf089c161d96fb795413ddf8d9ee5
+{
+    "block_hash": "0x172287fb360e8150ac2d3d60085406fd55a8281d1695a5f43945f11a396a96a",
+    "tx_status": "ACCEPTED_ON_L2"
+}
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet invoke \
+    --address 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353 \
+    --abi contract_abi.json \
+    --account 001 \
+    --function increase_balance \
+    --inputs 1234
+Sending the transaction with max_fee: 0.000005 ETH.
+Invoke transaction was sent.
+Contract address: 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353
+Transaction hash: 0x4d92306a66479586bfa4811fe42d1c43a46402e85934c5d3328ec1f1163d053
+
+starknet tx_status --hash 0x4d92306a66479586bfa4811fe42d1c43a46402e85934c5d3328ec1f1163d053
+
+starknet call \
+    --address 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353 \
+    --abi contract_abi.json \
+    --account 001 \
+    --function get_balance
+
+--------------------------------------------------------------------------------------------------
+
+    (starknet_venv) samimchala@Samis-MacBook-Pro-2 starknet % starknet invoke \                                                                                          
+    --address 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353 \
+    --abi contract_abi.json \
+    --account 001 \
+    --function increase_balance \
+    --inputs 1234
+Sending the transaction with max_fee: 0.000005 ETH.
+Invoke transaction was sent.
+Contract address: 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353
+Transaction hash: 0x1c4f2fd363c3f81316bdad3777fcbd03a604a851e811b7f9b5bd70dd291bea1
+
+
+starknet tx_status --hash 0x1c4f2fd363c3f81316bdad3777fcbd03a604a851e811b7f9b5bd70dd291bea1
+
+
+starknet call \                                                                                          
+    --address 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353 \
+    --abi contract_abi.json \
+    --account 001 \
+    --function get_balance \
+ 
+    starknet call \
+    --address 0x03529104225068b3b16c3cca88435495e72d5504780e420fa3ad2c911454f353 \
+    --abi contract_abi.json \
+    --account 001 \
+    --function get_balance
+
+--------------------------------------------------------------------------------------------------
+
+nile compile demux.cairo --account_contract

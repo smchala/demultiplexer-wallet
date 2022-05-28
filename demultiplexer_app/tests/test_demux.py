@@ -1,8 +1,7 @@
-"""contract.cairo test file."""
+"""demux.cairo test file."""
 import os
 
 import pytest
-import logging
 
 from starkware.starknet.testing.starknet import Starknet
 from utils.recipient import Recipient, RecipientWallet
@@ -50,10 +49,8 @@ async def test_can_get_a_specific_recipient():
     assert execution_info.result[0][1] == TestData.recipient1.email
     assert execution_info.result[0][2][0] == TestData.recipient1.recipient_wallet.address
     assert execution_info.result[0][2][1] == TestData.recipient1.recipient_wallet.weight
-    assert execution_info.result[0][2][2] == TestData.recipient1.recipient_wallet.value
-    assert execution_info.result[0][3] == TestData.recipient1.recuring_value
-    assert execution_info.result[0][4] == TestData.recipient1.recuring_period
-    assert execution_info.result[0][5] == TestData.recipient1.transaction_delay
+    assert execution_info.result[0][3] == TestData.recipient1.recuring_period
+    assert execution_info.result[0][4] == TestData.recipient1.transaction_delay
 
     # Check the result of get_recipient() for 1st added wallet.
     execution_info = await contract.get_recipient(wallet_number=1).call()
@@ -62,10 +59,8 @@ async def test_can_get_a_specific_recipient():
     assert execution_info.result[0][1] == TestData.recipient2.email
     assert execution_info.result[0][2][0] == TestData.recipient2.recipient_wallet.address
     assert execution_info.result[0][2][1] == TestData.recipient2.recipient_wallet.weight
-    assert execution_info.result[0][2][2] == TestData.recipient2.recipient_wallet.value
-    assert execution_info.result[0][3] == TestData.recipient1.recuring_value
-    assert execution_info.result[0][4] == TestData.recipient1.recuring_period
-    assert execution_info.result[0][5] == TestData.recipient1.transaction_delay
+    assert execution_info.result[0][3] == TestData.recipient1.recuring_period
+    assert execution_info.result[0][4] == TestData.recipient1.transaction_delay
 
 
 @pytest.mark.asyncio
@@ -108,25 +103,19 @@ async def test_set_configuration():
 
     # Invoke set_configuration() .
     await contract.set_configuration(
-        send_amount=0,
+        send_amount=10,
         send_type=1,
-        recuring_value=1,
-        recuring_period=1,
         equal_weights=1,
-        multi_sig=1,
-        transaction_delay=1,
-        expiry_date=0,).invoke()
+        multi_sig=0,
+        expiry_date=10,).invoke()
 
     # Check the result of get_configuration().
     execution_info = await contract.get_configuration().call()
     assert execution_info.result[0][0] == TestData.newConfiguration.send_amount
     assert execution_info.result[0][1] == TestData.newConfiguration.send_type
-    assert execution_info.result[0][2] == TestData.newConfiguration.recuring_value
-    assert execution_info.result[0][3] == TestData.newConfiguration.recuring_period
-    assert execution_info.result[0][4] == TestData.newConfiguration.equal_weights[0]
-    assert execution_info.result[0][5] == TestData.newConfiguration.multi_sig
-    assert execution_info.result[0][6] == TestData.newConfiguration.transaction_delay
-    assert execution_info.result[0][7] == TestData.newConfiguration.expiry_date
+    assert execution_info.result[0][2] == TestData.newConfiguration.equal_weights[0]
+    assert execution_info.result[0][3] == TestData.newConfiguration.multi_sig
+    assert execution_info.result[0][4] == TestData.newConfiguration.expiry_date
 
 
 # The testing library uses python's asyncio. So the following

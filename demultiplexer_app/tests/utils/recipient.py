@@ -1,14 +1,12 @@
 
 class RecipientWallet():
-    def __init__(self, _address, _weight, _value):
+    def __init__(self, _address, _weight):
         self.address = _address
         self.weight = _weight
-        self.value = _value
 
     def __eq__(self, other):
         return self.address == other.address and \
-            self.weight == other.weight and \
-            self.value == other.navalueme
+            self.weight == other.weight
 
 
 class Recipient():

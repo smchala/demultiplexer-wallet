@@ -5,16 +5,17 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_tx_info
 from starkware.cairo.common.math import assert_not_zero, assert_le, assert_nn
 
-from starkware.starknet.common.syscalls import (
-    call_contract,
-    get_tx_signature,
-    get_contract_address,
-    get_caller_address,
-)
+# from starkware.starknet.common.syscalls import (
+#     call_contract,
+#     get_tx_signature,
+#     get_contract_address,
+#     get_caller_address,
+# )
 
-using RecipientWallet = (address : felt, weight : felt, value : felt)
+# address -> xxxxx.eth woudl be a cool user experience
+using RecipientWallet = (address : felt, weight : felt)
 using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_value : felt, recuring_period : felt, transaction_delay : felt)
-using Configuration = (send_amount : felt, send_type : felt, recuring_value : felt, recuring_period : felt, equal_weights : felt, multi_sig : felt, transaction_delay : felt, expiry_date : felt)
+using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
 @storage_var
 func recipients_number() -> (index : felt):
@@ -28,9 +29,9 @@ end
 func configuration() -> (configuration : Configuration):
 end
 
-@storage_var
-func owner() -> (owner_address : felt):
-end
+# @storage_var
+# func owner() -> (owner_address : felt):
+# end
 
 # wip
 # @constructor
@@ -50,7 +51,6 @@ end
 func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt,
     weight : felt,
-    value : felt,
     wallet_name : felt,
     email : felt,
     recuring_value : felt,
@@ -59,7 +59,7 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ):
     alloc_locals
     let (last_index) = recipients_number.read()
-    local new_recipients_wallet : RecipientWallet = (address=address, weight=weight, value=value)
+    local new_recipients_wallet : RecipientWallet = (address=address, weight=weight)
     local new_recipients : Recipient = (wallet_name=wallet_name, email=email, recipientWallet=new_recipients_wallet, recuring_value=recuring_value, recuring_period=recuring_period, transaction_delay=transaction_delay)
     recipients.write(wallet_number=last_index, value=new_recipients)
     # keep track of recipients
@@ -94,24 +94,18 @@ end
 # Increases the balance by the given amount.
 @external
 func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    send_amount : felt,
-    send_type : felt,
-    recuring_value : felt,
-    recuring_period : felt,
-    equal_weights : felt,
-    multi_sig : felt,
-    transaction_delay : felt,
-    expiry_date : felt,
+    send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt
 ):
     alloc_locals
+    # assert_not_zero(send_amount)
+    # assert multi_sig = 0  # not supported yet, post poc!
+    # assert_not_zero(expiry_date)
+
     local newConfiguration : Configuration = (
         send_amount=send_amount,
         send_type=send_type,
-        recuring_value=recuring_value,
-        recuring_period=recuring_period,
         equal_weights=equal_weights,
         multi_sig=multi_sig,
-        transaction_delay=transaction_delay,
         expiry_date=expiry_date,
         )
 
@@ -133,14 +127,9 @@ end
 func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     wallet_number : felt
 ) -> (res : felt):
-    let (res) = balance.read()
-
-    let (rec) = recipients.read(wallet_number)
-    # assert_nn(rec.name)
-    # assert_nn(rec.email)
-    # assert_nn(rec.recipientWallet.address)
-    # assert_nn(rec.recipientWallet.weight)
-    # assert_nn(rec.recipientWallet.value)
+    let (recipientsNumber) = recipients_number.read()
+    let (recp) = recipients.read(wallet_number)
+    let (conf) = configuration.read()
     let (res) = balance.read()
     return (res)
 end
@@ -154,11 +143,11 @@ func get_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     return (res)
 end
 
-@view
-func get_tx_max_fee{syscall_ptr : felt*}() -> (max_fee : felt):
-    let (tx_info) = get_tx_info()
-    return (max_fee=tx_info.max_fee)
-end
+# @view
+# func get_tx_max_fee{syscall_ptr : felt*}() -> (max_fee : felt):
+#     let (tx_info) = get_tx_info()
+#     return (max_fee=tx_info.max_fee)
+# end
 
 # todo: should allow the user to remove a specific recipient: remove_recipient(wallet_number: felt)
 # todo: should allow the user to remove all recipients: remove_aal_recipient()
