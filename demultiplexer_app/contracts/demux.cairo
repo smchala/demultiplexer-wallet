@@ -14,7 +14,7 @@ from starkware.cairo.common.math import assert_not_zero, assert_le, assert_nn
 
 # address -> xxxxx.eth woudl be a cool user experience
 using RecipientWallet = (address : felt, weight : felt)
-using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_value : felt, recuring_period : felt, transaction_delay : felt)
+using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_period : felt, transaction_delay : felt)
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
 @storage_var
@@ -53,14 +53,13 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     weight : felt,
     wallet_name : felt,
     email : felt,
-    recuring_value : felt,
     recuring_period : felt,
     transaction_delay : felt,
 ):
     alloc_locals
     let (last_index) = recipients_number.read()
     local new_recipients_wallet : RecipientWallet = (address=address, weight=weight)
-    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, recipientWallet=new_recipients_wallet, recuring_value=recuring_value, recuring_period=recuring_period, transaction_delay=transaction_delay)
+    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, recipientWallet=new_recipients_wallet, recuring_period=recuring_period, transaction_delay=transaction_delay)
     recipients.write(wallet_number=last_index, value=new_recipients)
     # keep track of recipients
     recipients_number.write(last_index + 1)
@@ -134,7 +133,6 @@ func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     local is_configured = 1
     let (recipientsNumber) = recipients_number.read()
     let (current_configuration) = configuration.read()
-
     if recipientsNumber == 0:
         return (0)
     end
@@ -152,6 +150,16 @@ func get_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 ):
     let (res) = balance.read()
     return (res)
+end
+
+@external
+func set_transacions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    res : felt
+):
+    alloc_locals
+    let (isReady) = is_configuration_set()
+    # assert isReady = 1
+    return (isReady)
 end
 
 # @view

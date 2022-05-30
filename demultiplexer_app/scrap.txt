@@ -445,3 +445,17 @@ Transaction hash: 0x6d47b3efa2339ccd6a1a16d5e4424bd7757fd67e1fc4d36e9bacb80a8db3
 
 
 starknet tx_status --hash 0x6d47b3efa2339ccd6a1a16d5e4424bd7757fd67e1fc4d36e9bacb80a8db36aa
+
+-----------------------------------------------------------------------------------------
+starknet deploy --contract demux_compiled.json
+Deploy transaction was sent.
+Contract address: 0x0724611851f60198d9df76fc6fef3a812eabdf9a2e721f4ce3efdab06cfce71b
+Transaction hash: 0x187fa3228cf7345211c010cb46570e213adb68917fd6ae8e7d58701eceaa1a7
+
+starknet tx_status --hash 0x187fa3228cf7345211c010cb46570e213adb68917fd6ae8e7d58701eceaa1a7 --network alpha-goerli
+
+starknet invoke \
+    --address 0x0724611851f60198d9df76fc6fef3a812eabdf9a2e721f4ce3efdab06cfce71b \
+    --abi demux_abi.json \
+    --account 001 \
+    --function set_transacions

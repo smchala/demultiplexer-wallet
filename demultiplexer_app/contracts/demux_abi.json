@@ -18,10 +18,6 @@
                 "type": "felt"
             },
             {
-                "name": "recuring_value",
-                "type": "felt"
-            },
-            {
                 "name": "recuring_period",
                 "type": "felt"
             },
@@ -45,7 +41,7 @@
         "outputs": [
             {
                 "name": "recepients",
-                "type": "(wallet_name : felt, email : felt, recipientWallet : (address : felt, weight : felt), recuring_value : felt, recuring_period : felt, transaction_delay : felt)"
+                "type": "(wallet_name : felt, email : felt, recipientWallet : (address : felt, weight : felt), recuring_period : felt, transaction_delay : felt)"
             }
         ],
         "stateMutability": "view",
@@ -114,12 +110,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "name": "wallet_number",
-                "type": "felt"
-            }
-        ],
+        "inputs": [],
         "name": "is_configuration_set",
         "outputs": [
             {
@@ -140,6 +131,17 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "set_transacions",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
         "type": "function"
     }
 ]

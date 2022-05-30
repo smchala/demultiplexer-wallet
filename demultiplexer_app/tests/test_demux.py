@@ -2,7 +2,6 @@
 import os
 
 import pytest
-
 from starkware.starknet.testing.starknet import Starknet
 from utils.recipient import Recipient, RecipientWallet
 from utils.configuration import Configuration
