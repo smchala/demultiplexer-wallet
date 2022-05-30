@@ -97,6 +97,7 @@ func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt
 ):
     alloc_locals
+    # TODO: Check why the following was causing the function to fail on test net?
     # assert_not_zero(send_amount)
     # assert multi_sig = 0  # not supported yet, post poc!
     # assert_not_zero(expiry_date)
@@ -124,14 +125,24 @@ func increase_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 end
 
 @view
-func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    wallet_number : felt
-) -> (res : felt):
+func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    res : felt
+):
+    alloc_locals
+
+    # false -> 0, true -> 1
+    local is_configured = 1
     let (recipientsNumber) = recipients_number.read()
-    let (recp) = recipients.read(wallet_number)
-    let (conf) = configuration.read()
-    let (res) = balance.read()
-    return (res)
+    let (current_configuration) = configuration.read()
+
+    if recipientsNumber == 0:
+        return (0)
+    end
+    if current_configuration.send_amount == 0:
+        return (0)
+    end
+
+    return (is_configured)
 end
 
 # Returns the current balance.

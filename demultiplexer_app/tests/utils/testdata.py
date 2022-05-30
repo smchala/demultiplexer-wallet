@@ -24,7 +24,7 @@ class TestData():
     recipient2 = Recipient(0x736d6368616c6140686636f6d,
                            0x73616d69406f747373736f2e636f6d, recipient_wallet_2, 0, 0, 0)
 
-    def get_recipient1(contract):
+    def set_recipient1(contract):
         return contract.set_recipients(
             wallet_name=0x736d6368616c6140686f746d61696c2e636f6d,
             email=0x73616d69406f747373736f2e636f6d,
@@ -35,7 +35,7 @@ class TestData():
             transaction_delay=0,
         )
 
-    def get_recipient2(contract):
+    def set_recipient2(contract):
         return contract.set_recipients(
             wallet_name=0x736d6368616c6140686636f6d,
             email=0x73616d69406f747373736f2e636f6d,
