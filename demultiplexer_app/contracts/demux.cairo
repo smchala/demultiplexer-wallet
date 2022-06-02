@@ -2,17 +2,19 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import get_tx_info
 from starkware.cairo.common.math import assert_not_zero, assert_le, assert_nn
+from starkware.starknet.common.syscalls import (
+    call_contract,
+    get_caller_address,
+    get_tx_info,
+    get_contract_address,
+)
+from starkware.cairo.common.alloc import alloc
 
-# from starkware.starknet.common.syscalls import (
-#     call_contract,
-#     get_tx_signature,
-#     get_contract_address,
-#     get_caller_address,
-# )
+const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
+const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
 
-# address -> xxxxx.eth woudl be a cool user experience
+# address -> name.eth woudl be a cool user experience
 using RecipientWallet = (address : felt, weight : felt)
 using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_period : felt, transaction_delay : felt)
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
@@ -90,6 +92,40 @@ func get_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     return (res)
 end
 
+@view
+func get_mycaller_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    caller : felt
+):
+    let (caller) = get_caller_address()
+    return (caller)
+end
+
+# THIS WORKED, CHECKED ON VOYAGER!!!! :)
+# NOT SURE HOW TO TEST THIS YET...
+@external
+func increase_recipients_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    alloc_locals
+    # let (caller) = get_caller_address()
+    # return (caller)
+
+    let (call_calldata : felt*) = alloc()
+
+    # call_array
+    assert call_calldata[0] = 12
+
+    # assert call_calldata[1] = nonce
+
+    call_contract(
+        contract_address=RECIPIENT_ADDRESS,
+        function_selector=INCREASE_BALANCE_HASH,
+        calldata_size=1,
+        calldata=call_calldata,
+    )
+
+    return ()
+end
+
 # Increases the balance by the given amount.
 @external
 func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -158,7 +194,8 @@ func set_transacions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 ):
     alloc_locals
     let (isReady) = is_configuration_set()
-    # assert isReady = 1
+    # assert isReady = 1 #not sure why this fails on goerli
+
     return (isReady)
 end
 

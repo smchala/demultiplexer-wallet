@@ -72,6 +72,24 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "get_mycaller_address",
+        "outputs": [
+            {
+                "name": "caller",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "increase_recipients_balance",
+        "outputs": [],
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "name": "send_amount",
