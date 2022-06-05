@@ -582,4 +582,20 @@ IT WORKED!!!!!
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
+(erc721_venv) samimchala@Samis-MacBook-Pro-2 starknet-erc721 % nile deploy my_token 526783011487042898778543369199641445 4541514 1 1 1 1982779369182854397988941732020205014776742652757421731327552617690078163912 --alias laymon_juice_test_token --network goerli
+
 --------------------------------------------------------------------
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet-compile contracts/demux.cairo \
+    --output artifacts/demux_compiled.json \
+    --abi artifacts/demux_abi.json  --network alpha-goerli
+
+
+starknet deploy --contract artifacts/demux_compiled.json 526783011487042898778543369199641445 4541514 1 10000 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 --alias laymon_juice  --network alpha-goerli
+
+starknet deploy --contract demux_compiled.json --input 526783011487042898778543369199641445 4541514 1 11 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 --network alpha-goerli
+    name : felt,
+    symbol : felt,
+    decimals : felt,
+    initial_supply : Uint256,
+    recipient : felt,
+    owner : felt,
