@@ -1,4 +1,6 @@
 https://github.com/OpenZeppelin/nile
+https://github.com/starkware-libs/starknet-addresses/blob/master/bridged_tokens/goerli.json
+
 
 python3.7 -m venv ~/cairo_venv
 source ~/cairo_venv/bin/activate
@@ -585,17 +587,34 @@ IT WORKED!!!!!
 (erc721_venv) samimchala@Samis-MacBook-Pro-2 starknet-erc721 % nile deploy my_token 526783011487042898778543369199641445 4541514 1 1 1 1982779369182854397988941732020205014776742652757421731327552617690078163912 --alias laymon_juice_test_token --network goerli
 
 --------------------------------------------------------------------
+
+
 (starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet-compile contracts/demux.cairo \
-    --output artifacts/demux_compiled.json \
-    --abi artifacts/demux_abi.json  --network alpha-goerli
+    --output contracts/demux_compiled.json \
+    --abi contracts/demux_abi.json                     
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \
+    --input 526783011487042898778543369199641445 4541514 1 1 1 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 \
+    --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x007d89f9b42a34fad6ebe6591168f77533f3a392347ac2290f3b96a4d2581022
+Transaction hash: 0x33b70bad81b01ef5f50c886235bf71300ea7d51341f0eda0a0774e7952e4a32
 
 
-starknet deploy --contract artifacts/demux_compiled.json 526783011487042898778543369199641445 4541514 1 10000 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 --alias laymon_juice  --network alpha-goerli
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \
+    --input 526783011487042898778543369199641445 4541514 1 10000 0 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 \
+    --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x02dd36f0b246c1453e60f7b5ca4c6b8973ea431cbdecb0afa807c3f94e07005c
+Transaction hash: 0x7d1ce4f95fd0e85f2abedc355829ffefdbb3d2fa50b36b51b90e0ec1ceecde2
 
-starknet deploy --contract demux_compiled.json --input 526783011487042898778543369199641445 4541514 1 11 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 --network alpha-goerli
-    name : felt,
-    symbol : felt,
-    decimals : felt,
-    initial_supply : Uint256,
-    recipient : felt,
-    owner : felt,
+starknet tx_status --hash 0x7d1ce4f95fd0e85f2abedc355829ffefdbb3d2fa50b36b51b90e0ec1ceecde2 --network alpha-goerli
+
+======================================================================
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \
+    --input 526783011487042898778543369199641445 4541514 1 10000 0 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 \
+    --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x01fccacb18bd3e236000338524941aa349e65efae3af3dd4bf1b199183f285a7
+Transaction hash: 0x3236dc92a6a5a6db08f0bc899b6013c9e35675c68e9c29d459b539944aa2313

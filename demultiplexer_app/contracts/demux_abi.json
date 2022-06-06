@@ -414,6 +414,25 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "get_eth_l2_balance",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            },
+            {
+                "name": "res1_len",
+                "type": "felt"
+            },
+            {
+                "name": "res1",
+                "type": "felt*"
+            }
+        ],
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "name": "send_amount",

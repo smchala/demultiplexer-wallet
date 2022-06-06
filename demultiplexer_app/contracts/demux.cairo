@@ -252,6 +252,10 @@ end
 # end
 
 const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
+const RECIPIENT_ADDRESS_CHROME = 0x0462369e50f87dfe5cb354fe1c7d4d8f2315d3b6256e576e570edc54ca50b3c8
+const ETH_L2_ADDRESS = 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
+# use utils/util.py to get the function hash
+const BALANCE_OF_HASH = 0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e
 const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
 
 # address -> name.eth woudl be a cool user experience
@@ -364,6 +368,33 @@ func increase_recipients_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     )
 
     return ()
+end
+
+@external
+func get_eth_l2_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    res : felt, res1_len : felt, res1 : felt*
+):
+    # balanceOf str_to_felt 1814801012269441699686
+
+    alloc_locals
+    # let (caller) = get_caller_address()
+    # return (caller)
+
+    let (call_calldata : felt*) = alloc()
+
+    # call_array
+    assert call_calldata[0] = RECIPIENT_ADDRESS_CHROME
+
+    # assert call_calldata[1] = nonce
+
+    let (res, res1) = call_contract(
+        contract_address=ETH_L2_ADDRESS,
+        function_selector=BALANCE_OF_HASH,
+        calldata_size=1,
+        calldata=call_calldata,
+    )
+
+    return (res, 2, res1)
 end
 
 # Increases the balance by the given amount.
