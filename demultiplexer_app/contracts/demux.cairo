@@ -263,50 +263,35 @@ func call_get_eth_balance{syscall_ptr : felt*, range_check_ptr}(wallet_address :
     return (res=res)
 end
 
-@storage_var
-func decimal_conversion_inversed_index() -> (index : felt):
-end
+#
 @storage_var
 func decimal_conversion_index() -> (index : felt):
 end
+# ) -> (call_calldata_len : felt, call_calldata : felt*):
 
 @view
 func convertDecimalToBinary{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     value : felt
-) -> (binary_array_len : felt, binary_array : felt*):
+) -> (call_calldata_len : felt, call_calldata : felt*):
     alloc_locals
-    let (inversed_binary_array : felt*) = alloc()
-    let (local inversed_index) = decimal_conversion_inversed_index.read()
+    let (local call_calldata : felt*) = alloc()
+    let (local index) = decimal_conversion_index.read()
 
     let (q, r) = unsigned_div_rem(value=value, div=2)
-    assert inversed_binary_array[inversed_index] = r
-    decimal_conversion_inversed_index.write(inversed_index + 1)
-
-    let (inversed_index) = decimal_conversion_inversed_index.read()
-
-    conversion_loop:
-    let (q, r) = unsigned_div_rem(value=q, div=2)
-    assert inversed_binary_array[inversed_index] = r
-    decimal_conversion_inversed_index.write(inversed_index + 1)
-    let (inversed_index) = decimal_conversion_inversed_index.read()
-
-    jmp conversion_loop if q != 0
-
-    # reverse the array
-    let (local binary_array : felt*) = alloc()
-
-    inversing_array_loop:
-    let (index) = decimal_conversion_index.read()
-    # let (inversed_index) = decimal_conversion_inversed_index.read()
-    # let (local bit) = inversed_binary_array[inversed_index]
-    let bit = inversed_binary_array[inversed_index]
-    assert binary_array[index] = bit
+    assert call_calldata[index] = r
     decimal_conversion_index.write(index + 1)
-    decimal_conversion_inversed_index.write(inversed_index - 1)
 
-    jmp inversing_array_loop if inversed_index != 0
+    let (index) = decimal_conversion_index.read()
 
-    return (index, binary_array)
+    loop:
+    let (q, r) = unsigned_div_rem(value=q, div=2)
+    assert call_calldata[index] = r
+    decimal_conversion_index.write(index + 1)
+    let (index) = decimal_conversion_index.read()
+
+    jmp loop if q != 0
+
+    return (index, call_calldata)
 end
 
 @view
