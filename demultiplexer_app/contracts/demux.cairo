@@ -9,6 +9,7 @@ from starkware.starknet.common.syscalls import (
     get_contract_address,
 )
 from libs.cairocontracts.src.openzeppelin.security.pausable import Pausable
+from libs.starknetarraymanipulation.contracts.array_manipulation import reverse
 from starkware.cairo.common.alloc import alloc
 
 # import du types uint256 (Entier non signe sur 256) et des operations dessus
@@ -291,7 +292,15 @@ func convertDecimalToBinary{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
 
     jmp loop if q != 0
 
-    return (index, call_calldata)
+    # ----------------------------------------------
+    # Do not touch above ^^
+    # ----------------------------------------------
+
+    let (local resultArray : felt*) = alloc()
+
+    let (len, resultArray) = reverse(index, call_calldata)
+
+    return (len, resultArray)
 end
 
 @view

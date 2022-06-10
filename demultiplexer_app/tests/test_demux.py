@@ -258,5 +258,4 @@ async def test_convertDecimalToBinary():
 
     # Check the result of convertDecimalToBinary().
     execution_info = await contract.convertDecimalToBinary(value=10).invoke()
-    # assert execution_info.result[0] == ([1, 0, 1, 0])
-    assert execution_info.result[0] == ([0, 1, 0, 1])
+    assert execution_info.result[0] == ([1, 0, 1, 0])
