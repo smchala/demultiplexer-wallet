@@ -618,3 +618,65 @@ starknet tx_status --hash 0x7d1ce4f95fd0e85f2abedc355829ffefdbb3d2fa50b36b51b90e
 Deploy transaction was sent.
 Contract address: 0x01fccacb18bd3e236000338524941aa349e65efae3af3dd4bf1b199183f285a7
 Transaction hash: 0x3236dc92a6a5a6db08f0bc899b6013c9e35675c68e9c29d459b539944aa2313
+
+starknet tx_status --hash 0x3236dc92a6a5a6db08f0bc899b6013c9e35675c68e9c29d459b539944aa2313 --network alpha-goerli
+======================================================================
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \
+    --input 526783011487042898778543369199641445 4541514 1 100000 0 1982779369182854397988941732020205014776742652757421731327552617690078163912 1982779369182854397988941732020205014776742652757421731327552617690078163912 \
+    --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x05a7eff55725d5b7f4bb6c83bbb3f28f7d52e7468fabd969098ba2e1b676e37e
+Transaction hash: 0x71568d8538c26bca1ae304f5a19f974ff92705db8c2708d285cd5c6dcf3bd66
+
+
+starknet tx_status --hash 0x71568d8538c26bca1ae304f5a19f974ff92705db8c2708d285cd5c6dcf3bd66 --network alpha-goerli
+======================================================================
+
+08/06/2-22
+
+starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli
+
+starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x00f9785bca07d9683f4bab8bff9b37a931979402034cfd53d2a93e47604217bc
+Transaction hash: 0x2273fdb37dacd7a2e36e7afcce226701f5a99bc7319d64094013e41fdc3953f
+
+starknet tx_status --hash 0x2273fdb37dacd7a2e36e7afcce226701f5a99bc7319d64094013e41fdc3953f --network alpha-goerli
+======================================================================
+
+09/06/2-22
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli                                      
+Deploy transaction was sent.
+Contract address: 0x05838678ad344e059e6c4e6449b5499dab652a65a2c0cfde11acafa193da5332
+Transaction hash: 0x33501cf54995a838288f47226cc9971b4159c85ec8c29edc1cd1008a6aab0b0
+
+starknet tx_status --hash 0x33501cf54995a838288f47226cc9971b4159c85ec8c29edc1cd1008a6aab0b0 --network alpha-goerli
+
+
+checked the contract
+call_get_balance
+for eth contract 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7
+res: 5000000000000000
+0.005 ETH :)
+
+
+
+division_rem
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli                                      
+Deploy transaction was sent.
+Contract address: 0x07d7cc1b9c1b89567e24e6e4794e86b3fb15b969c3abbba94f5ce4c85b047d6b
+Transaction hash: 0x1306dd2dbb5f5937a448a78f7c854d087cc20c2368163565d03a7548932752
+
+
+starknet tx_status --hash 0x1306dd2dbb5f5937a448a78f7c854d087cc20c2368163565d03a7548932752 --network alpha-goerli
+
+
+convertDecimalToBinary:
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli                                      
+Deploy transaction was sent.
+Contract address: 0x00e5343102ca9132840cffc0a88051914badca9dcc1015b917be495ac9e583a4
+Transaction hash: 0x2801811150b99b1c6fe2c6932fa3fc9a180207c8f608ec4be6484fdfc9efb9e
+
+starknet tx_status --hash 0x2801811150b99b1c6fe2c6932fa3fc9a180207c8f608ec4be6484fdfc9efb9e --network alpha-goerli
