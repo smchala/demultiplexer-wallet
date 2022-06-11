@@ -272,35 +272,51 @@ end
 
 @view
 func convertDecimalToBinary{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    value : felt
-) -> (call_calldata_len : felt, call_calldata : felt*):
+    decimal_value : felt
+) -> (binary_array_len : felt, binary_array : felt*):
     alloc_locals
-    let (local call_calldata : felt*) = alloc()
+    let (local inversedArray : felt*) = alloc()
+    # Convert decimal to binary, result is an array [LSB, ..., MSB]
+    let (len, inversedArray) = convertToBinary(decimal_value)
+    # Reversing the above array to the correct order: [MSB, ..., LSB]
+    let (local resultArray : felt*) = alloc()
+    let (len, resultArray) = reverse(len, inversedArray)
+
+    return (len, resultArray)
+end
+
+func convertToBinary{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    decimal_value : felt
+) -> (binary_array_len : felt, binary_array : felt*):
+    alloc_locals
+    let (local binary_array : felt*) = alloc()
+    decimal_conversion_index.write(0)
     let (local index) = decimal_conversion_index.read()
 
-    let (q, r) = unsigned_div_rem(value=value, div=2)
-    assert call_calldata[index] = r
+    # Conversion to binary,
+    # Dividing the decimal by 2 as binary is base 2
+    # the cairo unsigned_div_rem method returns q and r
+    # q is the result of decimal_value/2
+    # r is the remainder
+    # add the r's to an array
+    # repeat it using a jmp until q = 0
+    # we end up with an array: [LSB,...,MSB]
+
+    let (q, r) = unsigned_div_rem(value=decimal_value, div=2)
+    assert binary_array[index] = r
     decimal_conversion_index.write(index + 1)
 
     let (index) = decimal_conversion_index.read()
 
     loop:
     let (q, r) = unsigned_div_rem(value=q, div=2)
-    assert call_calldata[index] = r
+    assert binary_array[index] = r
     decimal_conversion_index.write(index + 1)
     let (index) = decimal_conversion_index.read()
 
     jmp loop if q != 0
 
-    # ----------------------------------------------
-    # Do not touch above ^^
-    # ----------------------------------------------
-
-    let (local resultArray : felt*) = alloc()
-
-    let (len, resultArray) = reverse(index, call_calldata)
-
-    return (len, resultArray)
+    return (index, binary_array)
 end
 
 @view

@@ -2,12 +2,31 @@
 import os
 
 import pytest
+import asyncio
+
 from starkware.starknet.testing.starknet import Starknet
 from utils.recipient import Recipient, RecipientWallet
 from utils.configuration import Configuration
 from utils.testdata import TestData
 # The path to the contract source code.
 CONTRACT_FILE = os.path.join("contracts", "demux.cairo")
+
+'''Fix asyncio crash'''
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    return asyncio.get_event_loop()
+
+
+@pytest.fixture(scope="session")
+async def starknet():
+    return await Starknet.empty()
+
+
+@pytest.fixture(scope="session")
+async def contract(starknet):
+    return await starknet.deploy(source=CONTRACT_FILE,)
 
 
 # @pytest.mark.asyncio
@@ -244,7 +263,7 @@ CONTRACT_FILE = os.path.join("contracts", "demux.cairo")
 
 # The testing library uses python's asyncio. So the following
 # decorator and the ``async`` keyword are needed.
-@ pytest.mark.asyncio
+# @ pytest.mark.asyncio
 async def test_convertDecimalToBinary():
     """Test convertDecimalToBinary method."""
     # Create a new Starknet class that simulates the StarkNet
@@ -257,5 +276,28 @@ async def test_convertDecimalToBinary():
     )
 
     # Check the result of convertDecimalToBinary().
+    execution_info = await contract.convertDecimalToBinary(value=0).invoke()
+    assert execution_info.result[0] == ([0, 0])
+
+    execution_info = await contract.convertDecimalToBinary(value=1).invoke()
+    assert execution_info.result[0] == ([0, 1])
+
     execution_info = await contract.convertDecimalToBinary(value=10).invoke()
     assert execution_info.result[0] == ([1, 0, 1, 0])
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("input, result", [
+    (0, [0, 0]),
+    (1, [0, 1]),
+    (10, [1, 0, 1, 0]),
+    (233, [1, 1, 1, 0, 1, 0, 0, 1]),
+    (53978, [1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0]),
+    (11209824350, [1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1,
+     0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0]),
+    (23987543987239487293847234, [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0,
+     1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0]),
+])
+async def test_decimal_to_binary_conversion(contract, input, result):
+    execution_info = await contract.convertDecimalToBinary(decimal_value=input).invoke()
+    assert execution_info.result[0] == result
