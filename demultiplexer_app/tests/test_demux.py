@@ -32,6 +32,7 @@ async def contract(starknet):
 @pytest.mark.asyncio
 async def test_can_get_a_specific_recipient(contract):
     """Test cam get one specific recipient"""
+
     # check initially the are no recipients
     execution_info = await contract.get_recipients_number().call()
     assert execution_info.result == (0,)
@@ -73,8 +74,17 @@ async def test_can_get_a_specific_recipient(contract):
 
 
 @pytest.mark.asyncio
-async def test_multiple_receipients_can_be_added(contract):
+async def test_multiple_receipients_can_be_added():
     """Test multiple receipients can be added"""
+    # Create a new Starknet class that simulates the StarkNet
+    # system.
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+
     # check initially the are no recipients
     execution_info = await contract.get_recipients_number().call()
     assert execution_info.result == (0,)
@@ -110,16 +120,34 @@ async def test_set_configuration(contract):
 
 
 @ pytest.mark.asyncio
-async def test_is_configuration_set_when_none_of_configuration_and_recipients_are_set(contract):
+async def test_is_configuration_set_when_none_of_configuration_and_recipients_are_set():
     """Test is_configuration_set method."""
+    # Create a new Starknet class that simulates the StarkNet
+    # system.
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+
     # Check the result of is_configuration_set().
     execution_info = await contract.is_configuration_set().call()
     assert execution_info.result[0] == 0
 
 
 @ pytest.mark.asyncio
-async def test_is_configuration_set_when_recipients_is_set_only(contract):
+async def test_is_configuration_set_when_recipients_is_set_only():
     """Test is_configuration_set method."""
+    # Create a new Starknet class that simulates the StarkNet
+    # system.
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+
     # Check the result of is_configuration_set().
     execution_info = await contract.is_configuration_set().call()
     assert execution_info.result[0] == 0
@@ -133,8 +161,17 @@ async def test_is_configuration_set_when_recipients_is_set_only(contract):
 
 
 @ pytest.mark.asyncio
-async def test_is_configuration_set_when_configuration_is_set_only(contract):
+async def test_is_configuration_set_when_configuration_is_set_only():
     """Test is_configuration_set method."""
+    # Create a new Starknet class that simulates the StarkNet
+    # system.
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+
     # Check the result of is_configuration_set().
     execution_info = await contract.is_configuration_set().call()
     assert execution_info.result[0] == 0
@@ -153,8 +190,16 @@ async def test_is_configuration_set_when_configuration_is_set_only(contract):
 
 
 @ pytest.mark.asyncio
-async def test_is_configuration_set_when_configuration_and_recipients_are_both_set(contract):
+async def test_is_configuration_set_when_configuration_and_recipients_are_both_set():
     """Test is_configuration_set method."""
+    # Create a new Starknet class that simulates the StarkNet
+    # system.
+    starknet = await Starknet.empty()
+
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
 
     # Check the result of is_configuration_set().
     execution_info = await contract.is_configuration_set().call()
