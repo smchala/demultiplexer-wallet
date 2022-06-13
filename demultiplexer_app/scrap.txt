@@ -724,8 +724,40 @@ starknet tx_status --hash 0x2d6c4cdde58f136a62193b9f514ceddb1e00221c56e1a3ff37f8
 12/06/2022
 
 EXPERIMENT WITH OWNER:
-starknet deploy --contract contracts/demux_compiled.json \
+
+
+    (cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet-compile contracts/demux.cairo \
+    --output contracts/demux_compiled.json \
+    --abi contracts/demux_abi.json
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet declare --contract contracts/demux_compiled.json
+    
+Declare transaction was sent.
+Contract class hash: 0x4814ed58bc3dcf91306689e46e7ed1608d0e11872a06b64a8003ec4007f055b
+Transaction hash: 0x3084e8b6bb5b672b2dd33645fba63f58feba618a54d43698e5cdf156dd97cde
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \                                 
     --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 Deploy transaction was sent.
-Contract address: 0x0068f847a4d613a55c9d493ea13144b6ac3c3357d7ad11036c19d206c87ec462
-Transaction hash: 0x289d86973630154eec3f7ed22fb2d207cc6aca5f10aeafdc5cb5dcfe3f0984c
+Contract address: 0x03d118a3d45ec225c34031271175e84507251ede53b17d9aebebfab100fe385c
+Transaction hash: 0x3e279b6a045ed70dc04d717d0e8db809d0ad65e853c3f8a42e35ef11d2be106
+
+starknet tx_status --hash 0x3e279b6a045ed70dc04d717d0e8db809d0ad65e853c3f8a42e35ef11d2be106
+
+
+starknet call \
+    --address 0x03d118a3d45ec225c34031271175e84507251ede53b17d9aebebfab100fe385c \
+    --abi demux_abi.json \
+    --account 001 \
+    --function get_mycaller_address
+
+
+--------------------------------------------------------------------------------------------
+12/06/2022
+
+YAGI
+
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \                                 
+    --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
+Deploy transaction was sent.
+Contract address: 0x00b12f27ceda6db46c18c704203473f8b00d1bed0790d9375023c10e62b17ff0
+Transaction hash: 0xc94c795fb11a87f4c0e6f3eede285093caffa634652753f5015e1ae4d77cbb

@@ -7,6 +7,7 @@ from starkware.starknet.common.syscalls import (
     get_caller_address,
     get_tx_info,
     get_contract_address,
+    get_block_timestamp,
 )
 from libs.cairocontracts.src.openzeppelin.security.pausable import Pausable
 from libs.starknetarraymanipulation.contracts.array_manipulation import reverse
@@ -35,6 +36,14 @@ from starkware.cairo.common.math import (
     sqrt,
     unsigned_div_rem,
 )
+from starkware.cairo.common.math_cmp import (
+    is_in_range,
+    is_le,
+    is_le_felt,
+    is_nn,
+    is_nn_le,
+    is_not_zero,
+)
 
 const MYARGENTX_ADDRESS = 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
@@ -44,7 +53,7 @@ const ETH_L2_ADDRESS = 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82
 const BALANCE_OF_HASH = 0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e
 const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
 
-# address -> name.eth woudl be a cool user experience
+# address -> name.eth would be a cool user experience
 using Recipient = (wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt)
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
@@ -53,11 +62,19 @@ func recipients_number() -> (index : felt):
 end
 
 @storage_var
+func recipients_comparison_index() -> (index : felt):
+end
+
+@storage_var
 func recipients(wallet_number : felt) -> (recipients : Recipient):
 end
 
 @storage_var
 func configuration() -> (configuration : Configuration):
+end
+
+@storage_var
+func is_ready_to_fire_transaction(recipient : felt) -> (is_ready : felt):
 end
 
 @storage_var
@@ -236,6 +253,74 @@ func call_get_eth_balance{syscall_ptr : felt*, range_check_ptr}(wallet_address :
     let (res) = IERC20.balanceOf(contract_address=ETH_L2_ADDRESS, account=wallet_address)
     return (res=res)
 end
+
+# //////////////////////////////////////////////////////////////////////////////////////
+#  YAGI will call these functions
+
+# At this moment in time, recurring transactions are not supported
+# only delayed ones, therefore the number of transactions checked is based on the number of recipients only
+# might have time to introduce recurring feature, will see...
+
+# checking all good with is_le
+@view
+func compareValues{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(a, b) -> (
+    bool : felt
+):
+    let (is_le_felt) = is_le(a, b)
+    return (is_le_felt)
+end
+# TODO: checkTransactions will iterate through all transactions and isTransactionReady call for each
+@view
+func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> ():
+    return ()
+end
+
+func isReadyToFireTransaction{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    recipient_address : felt
+) -> (bool : felt):
+    let (isReady) = is_ready_to_fire_transaction.read(recipient_address)
+    return (isReady)
+end
+
+# only delayed transactions, no recurring ones yet, hopefully soon!
+@view
+func isTransactionReady{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> ():
+    alloc_locals
+
+    # todo check config is set
+
+    let (blockTimestamp) = get_block_timestamp()
+    let (_number_of_recipients) = recipients_number.read()
+    # surely there is a better way to track the index!!! this might be unnecessarily expensive
+    recipients_comparison_index.write(_number_of_recipients)
+    let (comparisonIndex) = recipients_comparison_index.read()
+
+    loop:
+    let (_recipient) = recipients.read(comparisonIndex - 1)
+    let (is_le_felt) = is_le(_recipient.transaction_delay, blockTimestamp)
+    is_ready_to_fire_transaction.write(_recipient.address, is_le_felt)
+    recipients_comparison_index.write(comparisonIndex - 1)
+    let (comparisonIndex) = recipients_comparison_index.read()
+
+    jmp loop if comparisonIndex != 0
+
+    return ()
+end
+
+@view
+func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    bool : felt
+):
+    return (0)
+end
+
+@view
+func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ) -> ():
+    return ()
+end
+
+# //////////////////////////////////////////////////////////////////////////////////////
 
 @contract_interface
 namespace IERC20:
