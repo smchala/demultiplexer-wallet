@@ -1,0 +1,851 @@
+[
+    {
+        "members": [
+            {
+                "name": "low",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "high",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "Uint256",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "contains",
+        "outputs": [
+            {
+                "name": "contains",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "index_of",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "min",
+        "outputs": [
+            {
+                "name": "min",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "index_of_min",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "max",
+        "outputs": [
+            {
+                "name": "max",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "index_of_max",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "occurrences_of",
+        "outputs": [
+            {
+                "name": "occurrences",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "add_first",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "add_last",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "add_at",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "remove_first",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "remove_last",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "remove_at",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "remove_first_occurence_of",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "remove_last_occurence_of",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "item",
+                "type": "felt"
+            }
+        ],
+        "name": "remove_all_occurences_of",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "reverse",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "name": "sort",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr1_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr1",
+                "type": "felt*"
+            },
+            {
+                "name": "arr2_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr2",
+                "type": "felt*"
+            }
+        ],
+        "name": "join",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "from_index",
+                "type": "felt"
+            },
+            {
+                "name": "to_index",
+                "type": "felt"
+            }
+        ],
+        "name": "copy_from_to",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            },
+            {
+                "name": "old_item",
+                "type": "felt"
+            },
+            {
+                "name": "new_item",
+                "type": "felt"
+            }
+        ],
+        "name": "replace",
+        "outputs": [
+            {
+                "name": "arr_len",
+                "type": "felt"
+            },
+            {
+                "name": "arr",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "data": [
+            {
+                "name": "account",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Paused",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "account",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Unpaused",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            },
+            {
+                "name": "weight",
+                "type": "felt"
+            },
+            {
+                "name": "wallet_name",
+                "type": "felt"
+            },
+            {
+                "name": "email",
+                "type": "felt"
+            },
+            {
+                "name": "recuring_period",
+                "type": "felt"
+            },
+            {
+                "name": "transaction_delay",
+                "type": "felt"
+            }
+        ],
+        "name": "set_recipients",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "wallet_number",
+                "type": "felt"
+            }
+        ],
+        "name": "get_recipient",
+        "outputs": [
+            {
+                "name": "recepients",
+                "type": "(wallet_name : felt, email : felt, recipientWallet : (address : felt, weight : felt), recuring_period : felt, transaction_delay : felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_recipients_number",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_configuration",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_mycaller_address",
+        "outputs": [
+            {
+                "name": "caller",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "increase_recipients_balance",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_eth_l2_balance",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            },
+            {
+                "name": "res1_len",
+                "type": "felt"
+            },
+            {
+                "name": "res1",
+                "type": "felt*"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "send_amount",
+                "type": "felt"
+            },
+            {
+                "name": "send_type",
+                "type": "felt"
+            },
+            {
+                "name": "equal_weights",
+                "type": "felt"
+            },
+            {
+                "name": "multi_sig",
+                "type": "felt"
+            },
+            {
+                "name": "expiry_date",
+                "type": "felt"
+            }
+        ],
+        "name": "set_configuration",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "felt"
+            }
+        ],
+        "name": "increase_balance",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "is_configuration_set",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_balance",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "set_transacions",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "wallet_address",
+                "type": "felt"
+            }
+        ],
+        "name": "call_get_eth_balance",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "Uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "value",
+                "type": "felt"
+            }
+        ],
+        "name": "convertDecimalToBinary",
+        "outputs": [
+            {
+                "name": "binary_array_len",
+                "type": "felt"
+            },
+            {
+                "name": "binary_array",
+                "type": "felt*"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "value",
+                "type": "felt"
+            },
+            {
+                "name": "div",
+                "type": "felt"
+            }
+        ],
+        "name": "division_rem",
+        "outputs": [
+            {
+                "name": "q",
+                "type": "felt"
+            },
+            {
+                "name": "r",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

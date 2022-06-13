@@ -45,8 +45,7 @@ const BALANCE_OF_HASH = 0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a
 const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
 
 # address -> name.eth woudl be a cool user experience
-using RecipientWallet = (address : felt, weight : felt)
-using Recipient = (wallet_name : felt, email : felt, recipientWallet : RecipientWallet, recuring_period : felt, transaction_delay : felt)
+using Recipient = (wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt)
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
 @storage_var
@@ -61,21 +60,17 @@ end
 func configuration() -> (configuration : Configuration):
 end
 
-# @storage_var
-# func owner() -> (owner_address : felt):
-# end
-
-# wip
-# @constructor
-# func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     # owner_address : felt
-#     # owner.write(value=owner_address)
-#     return ()
-# end
-
-# Define a storage variable.
 @storage_var
-func balance() -> (res : felt):
+func owner() -> (owner_address : felt):
+end
+
+@constructor
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    owner_address : felt
+):
+    # owner_address : felt
+    owner.write(value=owner_address)
+    return ()
 end
 
 # TODO: email-> might need to pass it as a blob, pgp maybe? dont want spamming :)
@@ -90,8 +85,7 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ):
     alloc_locals
     let (last_index) = recipients_number.read()
-    local new_recipients_wallet : RecipientWallet = (address=address, weight=weight)
-    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, recipientWallet=new_recipients_wallet, recuring_period=recuring_period, transaction_delay=transaction_delay)
+    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay)
     recipients.write(wallet_number=last_index, value=new_recipients)
     # keep track of recipients
     recipients_number.write(last_index + 1)
@@ -123,6 +117,14 @@ func get_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 end
 
 @view
+func owner_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    owner_address : felt
+):
+    let (owner_address) = owner.read()
+    return (owner_address)
+end
+
+@view
 func get_mycaller_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     caller : felt
 ):
@@ -144,6 +146,7 @@ func increase_recipients_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     # call_array
     assert call_calldata[0] = 12
 
+    # TODO: set up the nonce
     # assert call_calldata[1] = nonce
 
     call_contract(
@@ -161,18 +164,10 @@ func get_eth_l2_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     res : felt, res1_len : felt, res1 : felt*
 ):
     # balanceOf str_to_felt 1814801012269441699686
-
     alloc_locals
-    # let (caller) = get_caller_address()
-    # return (caller)
-
     let (call_calldata : felt*) = alloc()
-
-    # call_array
     assert call_calldata[0] = RECIPIENT_ADDRESS_CHROME
-
     # assert call_calldata[1] = nonce
-
     let (res, res1) = call_contract(
         contract_address=ETH_L2_ADDRESS,
         function_selector=BALANCE_OF_HASH,
@@ -183,16 +178,14 @@ func get_eth_l2_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     return (res, 2, res1)
 end
 
-# Increases the balance by the given amount.
 @external
 func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt
 ):
     alloc_locals
-    # TODO: Check why the following was causing the function to fail on test net?
-    # assert_not_zero(send_amount)
-    # assert multi_sig = 0  # not supported yet, post poc!
-    # assert_not_zero(expiry_date)
+    assert_not_zero(send_amount)
+    assert multi_sig = 0  # not supported yet, post poc!
+    assert_not_zero(expiry_date)
 
     local newConfiguration : Configuration = (
         send_amount=send_amount,
@@ -206,23 +199,12 @@ func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     return ()
 end
 
-# Increases the balance by the given amount.
-@external
-func increase_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    amount : felt
-):
-    let (res) = balance.read()
-    balance.write(res + amount)
-    return ()
-end
-
 @view
 func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     res : felt
 ):
     alloc_locals
-
-    # false -> 0, true -> 1
+    # TODO: complete validation of all fields
     local is_configured = 1
     let (recipientsNumber) = recipients_number.read()
     let (current_configuration) = configuration.read()
@@ -234,15 +216,6 @@ func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     end
 
     return (is_configured)
-end
-
-# Returns the current balance.
-@view
-func get_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
-):
-    let (res) = balance.read()
-    return (res)
 end
 
 @external
@@ -264,11 +237,43 @@ func call_get_eth_balance{syscall_ptr : felt*, range_check_ptr}(wallet_address :
     return (res=res)
 end
 
-#
+@contract_interface
+namespace IERC20:
+    func name() -> (name : felt):
+    end
+
+    func symbol() -> (symbol : felt):
+    end
+
+    func decimals() -> (decimals : felt):
+    end
+
+    func totalSupply() -> (totalSupply : Uint256):
+    end
+
+    func balanceOf(account : felt) -> (balance : Uint256):
+    end
+
+    func allowance(owner : felt, spender : felt) -> (remaining : Uint256):
+    end
+
+    func transfer(recipient : felt, amount : Uint256) -> (success : felt):
+    end
+
+    func transferFrom(sender : felt, recipient : felt, amount : Uint256) -> (success : felt):
+    end
+
+    func approve(spender : felt, amount : Uint256) -> (success : felt):
+    end
+end
+
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# section: DO NOT REMOVE!
+# TODO: set up configuration to use this converter so we can use the original planned set up with decimals, 48 to 63
+# check doc for details
 @storage_var
 func decimal_conversion_index() -> (index : felt):
 end
-# ) -> (call_calldata_len : felt, call_calldata : felt*):
 
 @view
 func convertDecimalToBinary{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -324,7 +329,7 @@ func division_rem{syscall_ptr : felt*, range_check_ptr}(value, div) -> (q : felt
     let (q, r) = unsigned_div_rem(value=value, div=div)
     return (q, r)
 end
-
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # @view
 # func get_tx_max_fee{syscall_ptr : felt*}() -> (max_fee : felt):
 #     let (tx_info) = get_tx_info()
@@ -339,64 +344,3 @@ end
 #     let (account_from_balance) = get_account_token_balance(
 #         account_id=account_id, token_type=token_from
 #     )
-
-# func swap{
-#     syscall_ptr : felt*,
-#     pedersen_ptr : HashBuiltin*,
-#     range_check_ptr,
-# }(account_id : felt, token_from : felt, amount_from : felt) -> (
-#     amount_to : felt
-# ):
-#     # Verify that token_from is either TOKEN_TYPE_A or TOKEN_TYPE_B.
-#     assert (token_from - TOKEN_TYPE_A) * (token_from - TOKEN_TYPE_B) = 0
-
-# # Check requested amount_from is valid.
-#     assert_nn_le(amount_from, BALANCE_UPPER_BOUND - 1)
-
-# # Check user has enough funds.
-#     let (account_from_balance) = get_account_token_balance(
-#         account_id=account_id, token_type=token_from
-#     )
-#     assert_le(amount_from, account_from_balance)
-
-# # Execute the actual swap.
-#     let (token_to) = get_opposite_token(token_type=token_from)
-#     let (amount_to) = do_swap(
-#         account_id=account_id,
-#         token_from=token_from,
-#         token_to=token_to,
-#         amount_from=amount_from,
-#     )
-
-# return (amount_to=amount_to)
-# end
-
-@contract_interface
-namespace IERC20:
-    func name() -> (name : felt):
-    end
-
-    func symbol() -> (symbol : felt):
-    end
-
-    func decimals() -> (decimals : felt):
-    end
-
-    func totalSupply() -> (totalSupply : Uint256):
-    end
-
-    func balanceOf(account : felt) -> (balance : Uint256):
-    end
-
-    func allowance(owner : felt, spender : felt) -> (remaining : Uint256):
-    end
-
-    func transfer(recipient : felt, amount : Uint256) -> (success : felt):
-    end
-
-    func transferFrom(sender : felt, recipient : felt, amount : Uint256) -> (success : felt):
-    end
-
-    func approve(spender : felt, amount : Uint256) -> (success : felt):
-    end
-end

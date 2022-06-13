@@ -53,165 +53,6 @@
                 "type": "felt"
             }
         ],
-        "name": "contains",
-        "outputs": [
-            {
-                "name": "contains",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            },
-            {
-                "name": "item",
-                "type": "felt"
-            }
-        ],
-        "name": "index_of",
-        "outputs": [
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "name": "min",
-        "outputs": [
-            {
-                "name": "min",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "name": "index_of_min",
-        "outputs": [
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "name": "max",
-        "outputs": [
-            {
-                "name": "max",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "name": "index_of_max",
-        "outputs": [
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            },
-            {
-                "name": "item",
-                "type": "felt"
-            }
-        ],
-        "name": "occurrences_of",
-        "outputs": [
-            {
-                "name": "occurrences",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            },
-            {
-                "name": "item",
-                "type": "felt"
-            }
-        ],
         "name": "add_first",
         "outputs": [
             {
@@ -482,126 +323,13 @@
     {
         "inputs": [
             {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "name": "sort",
-        "outputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr1_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr1",
-                "type": "felt*"
-            },
-            {
-                "name": "arr2_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr2",
-                "type": "felt*"
-            }
-        ],
-        "name": "join",
-        "outputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            },
-            {
-                "name": "from_index",
-                "type": "felt"
-            },
-            {
-                "name": "to_index",
+                "name": "owner_address",
                 "type": "felt"
             }
         ],
-        "name": "copy_from_to",
-        "outputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            },
-            {
-                "name": "old_item",
-                "type": "felt"
-            },
-            {
-                "name": "new_item",
-                "type": "felt"
-            }
-        ],
-        "name": "replace",
-        "outputs": [
-            {
-                "name": "arr_len",
-                "type": "felt"
-            },
-            {
-                "name": "arr",
-                "type": "felt*"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
     },
     {
         "inputs": [
@@ -677,6 +405,18 @@
     },
     {
         "inputs": [],
+        "name": "owner_address",
+        "outputs": [
+            {
+                "name": "owner_address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "get_mycaller_address",
         "outputs": [
             {
@@ -740,31 +480,8 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "name": "amount",
-                "type": "felt"
-            }
-        ],
-        "name": "increase_balance",
-        "outputs": [],
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "is_configuration_set",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "get_balance",
         "outputs": [
             {
                 "name": "res",
@@ -805,18 +522,18 @@
     {
         "inputs": [
             {
-                "name": "value",
+                "name": "decimal_value",
                 "type": "felt"
             }
         ],
         "name": "convertDecimalToBinary",
         "outputs": [
             {
-                "name": "call_calldata_len",
+                "name": "binary_array_len",
                 "type": "felt"
             },
             {
-                "name": "call_calldata",
+                "name": "binary_array",
                 "type": "felt*"
             }
         ],

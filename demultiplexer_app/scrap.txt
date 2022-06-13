@@ -676,7 +676,56 @@ starknet tx_status --hash 0x1306dd2dbb5f5937a448a78f7c854d087cc20c2368163565d03a
 convertDecimalToBinary:
 (starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli                                      
 Deploy transaction was sent.
-Contract address: 0x00e5343102ca9132840cffc0a88051914badca9dcc1015b917be495ac9e583a4
-Transaction hash: 0x2801811150b99b1c6fe2c6932fa3fc9a180207c8f608ec4be6484fdfc9efb9e
+Contract address: 0x02f64691b6935392b05039ef8881bdf5d8bd9f09eda195ffed32f7ccaf3cdb8c
+Transaction hash: 0x3ddbbce541e3a20eef07c635790a81cf2d27a6fe6fbfbf292e5a38791cd3fb
 
-starknet tx_status --hash 0x2801811150b99b1c6fe2c6932fa3fc9a180207c8f608ec4be6484fdfc9efb9e --network alpha-goerli
+starknet tx_status --hash 0x3ddbbce541e3a20eef07c635790a81cf2d27a6fe6fbfbf292e5a38791cd3fb --network alpha-goerli
+
+
+--------------------------------------------------------------------------------------------
+
+CONVERSION DECIMAL TO BINARY WORKING!
+
+(starknet_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x04890a684d249d4d782c860e8ebbce6f74b150d4b3605552f3a45c5694f1cd8b
+Transaction hash: 0x7e261b47f04cd327da60168298c6bbe5863f9ef983fd8e498722184dbf939f4
+
+starknet tx_status --hash 0x7e261b47f04cd327da60168298c6bbe5863f9ef983fd8e498722184dbf939f4 --network alpha-goerli
+
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+CAIRO 0.9.0!!!!!
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet declare --contract contracts/demux_compiled.json                          
+
+Declare transaction was sent.
+Contract class hash: 0x35830c7e31f2f79ca46d46988ae0c46516c76f11494445f726f16d69238767a
+Transaction hash: 0x2f207bb736caddd647776a24d132ccf95b7ea249574ac654547372f775deb63
+
+
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json                           
+
+Deploy transaction was sent.
+Contract address: 0x0180bba563d919997e6459f8fba084cb48602810457e07561a5249aa9fa64cba
+Transaction hash: 0x2d6c4cdde58f136a62193b9f514ceddb1e00221c56e1a3ff37f811a94c1f767
+
+
+starknet tx_status --hash 0x2d6c4cdde58f136a62193b9f514ceddb1e00221c56e1a3ff37f811a94c1f767 --network alpha-goerli
+
+--------------------------------------------------------------------------------------------
+12/06/2022
+
+EXPERIMENT WITH OWNER:
+starknet deploy --contract contracts/demux_compiled.json \
+    --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
+Deploy transaction was sent.
+Contract address: 0x0068f847a4d613a55c9d493ea13144b6ac3c3357d7ad11036c19d206c87ec462
+Transaction hash: 0x289d86973630154eec3f7ed22fb2d207cc6aca5f10aeafdc5cb5dcfe3f0984c

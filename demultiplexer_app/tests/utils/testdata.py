@@ -1,4 +1,4 @@
-from utils.recipient import Recipient, RecipientWallet
+from utils.recipient import Recipient
 from utils.configuration import Configuration
 
 
@@ -13,16 +13,12 @@ class TestData():
     )
 
     # test data
-    recipient_wallet_1 = RecipientWallet(
-        0x032e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, 1)
     recipient1 = Recipient(0x736d6368616c6140686f746d61696c2e636f6d,
-                           0x73616d69406f747373736f2e636f6d, recipient_wallet_1, 0, 0)
+                           0x73616d69406f747373736f2e636f6d, 0x032e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, 1, 0, 0)
 
     # test data
-    recipient_wallet_2 = RecipientWallet(
-        0x045e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, 1)
     recipient2 = Recipient(0x736d6368616c6140686636f6d,
-                           0x73616d69406f747373736f2e636f6d, recipient_wallet_2, 0, 0)
+                           0x73616d69406f747373736f2e636f6d, 0x045e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd, 1, 0, 0)
 
     def set_recipient1(contract):
         return contract.set_recipients(
