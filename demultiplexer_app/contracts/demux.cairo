@@ -54,7 +54,7 @@ const BALANCE_OF_HASH = 0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a
 const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
 
 # address -> name.eth would be a cool user experience
-using Recipient = (wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt)
+using Recipient = (wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt, ready_to_send : felt)
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
 @storage_var
@@ -71,10 +71,6 @@ end
 
 @storage_var
 func configuration() -> (configuration : Configuration):
-end
-
-@storage_var
-func is_ready_to_fire_transaction(recipient : felt) -> (is_ready : felt):
 end
 
 @storage_var
@@ -102,7 +98,7 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ):
     alloc_locals
     let (last_index) = recipients_number.read()
-    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay)
+    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay, ready_to_send=0)
     recipients.write(wallet_number=last_index, value=new_recipients)
     # keep track of recipients
     recipients_number.write(last_index + 1)
@@ -235,16 +231,16 @@ func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     return (is_configured)
 end
 
-@external
-func set_transacions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
-):
-    alloc_locals
-    let (isReady) = is_configuration_set()
-    # assert isReady = 1 #not sure why this fails on goerli
+# @external
+# func set_transacions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+#     res : felt
+# ):
+#     alloc_locals
+#     let (isReady) = is_configuration_set()
+#     # assert isReady = 1 #not sure why this fails on goerli
 
-    return (isReady)
-end
+# return (isReady)
+# end
 
 @view
 func call_get_eth_balance{syscall_ptr : felt*, range_check_ptr}(wallet_address : felt) -> (
@@ -275,36 +271,25 @@ func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     return ()
 end
 
-func isReadyToFireTransaction{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    recipient_address : felt
+@view
+func recipientAddress{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    index : felt
 ) -> (bool : felt):
-    let (isReady) = is_ready_to_fire_transaction.read(recipient_address)
-    return (isReady)
+    let (_recipient) = recipients.read(index)
+    return (_recipient.address)
 end
 
 # only delayed transactions, no recurring ones yet, hopefully soon!
 @view
-func isTransactionReady{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> ():
+func isTransactionReady{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    index : felt
+) -> (is_le_felt : felt):
     alloc_locals
-
     # todo check config is set
-
-    let (blockTimestamp) = get_block_timestamp()
-    let (_number_of_recipients) = recipients_number.read()
-    # surely there is a better way to track the index!!! this might be unnecessarily expensive
-    recipients_comparison_index.write(_number_of_recipients)
-    let (comparisonIndex) = recipients_comparison_index.read()
-
-    loop:
-    let (_recipient) = recipients.read(comparisonIndex - 1)
-    let (is_le_felt) = is_le(_recipient.transaction_delay, blockTimestamp)
-    is_ready_to_fire_transaction.write(_recipient.address, is_le_felt)
-    recipients_comparison_index.write(comparisonIndex - 1)
-    let (comparisonIndex) = recipients_comparison_index.read()
-
-    jmp loop if comparisonIndex != 0
-
-    return ()
+    let (_blockTimestamp) = get_block_timestamp()
+    let (_recipient) = recipients.read(index)
+    let (is_le_felt) = is_le(_recipient.transaction_delay, _blockTimestamp)
+    return (is_le_felt)
 end
 
 @view

@@ -761,3 +761,35 @@ YAGI
 Deploy transaction was sent.
 Contract address: 0x00b12f27ceda6db46c18c704203473f8b00d1bed0790d9375023c10e62b17ff0
 Transaction hash: 0xc94c795fb11a87f4c0e6f3eede285093caffa634652753f5015e1ae4d77cbb
+
+starknet tx_status --hash 0xc94c795fb11a87f4c0e6f3eede285093caffa634652753f5015e1ae4d77cbb
+
+--------------------------------------------------------------------------------------------
+13/06/2022
+check recipients transaction delay against block time
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet-compile contracts/demux.cairo \                                         
+    --output contracts/demux_compiled.json \                                  
+    --abi contracts/demux_abi.json
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/demux_compiled.json \                                 
+    --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
+Deploy transaction was sent.
+Contract address: 0x0338314721084cef0c10a61da80eff88f5de84ba4427ae742372bdcde6048921
+Transaction hash: 0x1a98adbdfa11efc92cdda73734d4607c6c8cf2fcd2890884bf1396e014c7881
+
+starknet tx_status --hash 0x1a98adbdfa11efc92cdda73734d4607c6c8cf2fcd2890884bf1396e014c7881
+
+
+recipient 1
+
+0x4cc6d83c6aba3c5ff64c765efb8af955002464ad1e1b30b43e86a8c071cebf4
+
+1686672635 in the past
+
+
+
+recipient 2
+
+0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
+
+1686672635 in the future

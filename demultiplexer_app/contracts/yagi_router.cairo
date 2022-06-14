@@ -1,12 +1,11 @@
 %lang starknet
+# Yagi router
 
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 
 from contracts.design.access import assert_correct_admin_key
-
-# router
 
 @contract_interface
 namespace IContractDemux:
