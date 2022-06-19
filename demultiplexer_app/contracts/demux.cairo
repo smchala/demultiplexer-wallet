@@ -2,6 +2,8 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.memcpy import memcpy
+
 from starkware.starknet.common.syscalls import (
     call_contract,
     get_caller_address,
@@ -10,7 +12,11 @@ from starkware.starknet.common.syscalls import (
     get_block_timestamp,
 )
 from libs.cairocontracts.src.openzeppelin.security.pausable import Pausable
-from libs.starknetarraymanipulation.contracts.array_manipulation import reverse
+from libs.starknetarraymanipulation.contracts.array_manipulation import (
+    reverse,
+    add_at,
+    remove_first,
+)
 from starkware.cairo.common.alloc import alloc
 
 # import du types uint256 (Entier non signe sur 256) et des operations dessus
@@ -45,6 +51,7 @@ from starkware.cairo.common.math_cmp import (
     is_not_zero,
 )
 
+const COUNTER = 0
 const MYARGENTX_ADDRESS = 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
 const RECIPIENT_ADDRESS_CHROME = 0x0462369e50f87dfe5cb354fe1c7d4d8f2315d3b6256e576e570edc54ca50b3c8
@@ -59,6 +66,9 @@ using Configuration = (send_amount : felt, send_type : felt, equal_weights : fel
 
 @storage_var
 func recipients_number() -> (index : felt):
+end
+@storage_var
+func transactions_number() -> (index : felt):
 end
 
 @storage_var
@@ -76,6 +86,8 @@ end
 @storage_var
 func owner() -> (owner_address : felt):
 end
+
+let (recipients_array : Recipient*) = alloc()
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -100,6 +112,14 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     let (last_index) = recipients_number.read()
     local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay, ready_to_send=0)
     recipients.write(wallet_number=last_index, value=new_recipients)
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+    # assert recipients_array[last_index] = new_recipients
+    # set_recipients_array(new_recipients)
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
     # keep track of recipients
     recipients_number.write(last_index + 1)
     return ()
@@ -109,6 +129,10 @@ end
 func get_recipient{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     wallet_number : felt
 ) -> (recepients : Recipient):
+    alloc_locals
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
     let (res) = recipients.read(wallet_number=wallet_number)
     return (res)
 end
@@ -270,6 +294,7 @@ end
 func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> ():
     return ()
 end
+# //////////////////////////////////////////////////////////////////////////////////////
 
 @view
 func recipientAddress{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -281,7 +306,7 @@ end
 
 # only delayed transactions, no recurring ones yet, hopefully soon!
 @view
-func isTransactionReady{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func is_transaction_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     index : felt
 ) -> (is_le_felt : felt):
     alloc_locals
@@ -290,6 +315,89 @@ func isTransactionReady{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     let (_recipient) = recipients.read(index)
     let (is_le_felt) = is_le(_recipient.transaction_delay, _blockTimestamp)
     return (is_le_felt)
+end
+
+@storage_var
+func counter() -> (index : felt):
+end
+@storage_var
+func temp_recipients_index() -> (index : felt):
+end
+
+# ) -> (res : felt):
+
+@external
+func check_all_transactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    temp_recipients_ix : felt
+) -> (resArray_len : felt, resArray : felt*):
+    alloc_locals
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    # let (temp_index) = counter.read()
+    let (arr : felt*) = alloc()
+
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    # let (temp_index) = counter.read()
+
+    loop:
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    let (recipient) = get_recipient(temp_recipients_ix - 1)
+    let (temp_index) = counter.read()
+    assert arr[temp_index] = recipient.transaction_delay
+    counter.write(temp_index + 1)
+    let (temp_index) = counter.read()
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    temp_recipients_index.write(temp_recipients_ix - 1)
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    let (temp_recipients_ix) = temp_recipients_index.read()
+
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
+
+    if temp_index == 2:
+        tempvar syscall_ptr = syscall_ptr
+        tempvar pedersen_ptr = pedersen_ptr
+        tempvar range_check_ptr = range_check_ptr
+
+        let (recipient) = get_recipient(0)
+        assert arr[temp_index] = recipient.transaction_delay
+
+        tempvar syscall_ptr = syscall_ptr
+        tempvar pedersen_ptr = pedersen_ptr
+        tempvar range_check_ptr = range_check_ptr
+
+        return (temp_index, arr)
+    else:
+        tempvar syscall_ptr = syscall_ptr
+        tempvar pedersen_ptr = pedersen_ptr
+        tempvar range_check_ptr = range_check_ptr
+
+        return (temp_index, arr)
+    end
+
+    jmp loop
+
+    let (arr : felt*) = alloc()
+
+    return (0, arr)
+    tempvar syscall_ptr = syscall_ptr
+    tempvar pedersen_ptr = pedersen_ptr
+    tempvar range_check_ptr = range_check_ptr
 end
 
 @view

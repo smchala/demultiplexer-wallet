@@ -26,10 +26,9 @@ end
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    owner_address : felt, demux_contract_address : fely
+    owner_address : felt
 ):
     owner.write(value=owner_address)
-    demux_address.write(value=demux_contract_address)
     return ()
 end
 
@@ -42,13 +41,22 @@ func view_isaac_universe_address{syscall_ptr : felt, pedersen_ptr : HashBuiltin,
 end
 
 @external
+func set_demux_address{syscall_ptr : felt, pedersen_ptr : HashBuiltin, range_check_ptr}(
+    demux_contract_address : felt
+):
+    # check if the owner is setting it
+    demux_address.write(value=demux_contract_address)
+    return ()
+end
+
+@external
 func change_isaac_universe_address{syscall_ptr : felt, pedersen_ptr : HashBuiltin, range_check_ptr}(
     admin_key : felt, new_address : felt
 ) -> ():
     #
-    # Check admin
+    # Check admin!!!
     #
-    assert_correct_admin_key(admin_key)
+    assert_correct_admin_key(admin_key)  # todo
 
     isaac_universe_address.write(new_address)
 
