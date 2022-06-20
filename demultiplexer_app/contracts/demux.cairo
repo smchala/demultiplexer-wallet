@@ -65,25 +65,6 @@ using Recipient = (wallet_name : felt, email : felt, address : felt, weight : fe
 using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
 
 @storage_var
-func recipients_transactions_delay(index : felt) -> (delay : felt):
-end
-@storage_var
-func recipients_addresses() -> (index : felt):
-end
-@storage_var
-func recipients_wallet_names() -> (index : felt):
-end
-@storage_var
-func recipients_transactions_weight() -> (index : felt):
-end
-@storage_var
-func recipients_email() -> (index : felt):
-end
-@storage_var
-func recipients_recurring_period() -> (index : felt):
-end
-
-@storage_var
 func recipients_number() -> (index : felt):
 end
 @storage_var
@@ -91,11 +72,11 @@ func transactions_number() -> (index : felt):
 end
 
 @storage_var
-func recipients_comparison_index() -> (index : felt):
+func recipients(wallet_number : felt) -> (recipients : Recipient):
 end
 
 @storage_var
-func recipients(wallet_number : felt) -> (recipients : Recipient):
+func recipients_transactions_delay(index : felt) -> (delay : felt):
 end
 
 @storage_var
@@ -139,7 +120,6 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
-    recipients_transactions_delay.write(last_index, transaction_delay)
     # keep track of recipients
     recipients_number.write(last_index + 1)
     return ()
@@ -179,42 +159,6 @@ func get_transaction_delay{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 ) -> (res : felt):
     let (res) = recipients_transactions_delay.read(index)
     return (res)
-end
-
-@view
-func get_addresse{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    index : felt
-) -> (res : felt):
-    let (res) = recipients_addresses.read()
-    return (res)
-end
-
-tempvar recursion_index = 0
-
-@view
-func recursion{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    arr_len : felt, arr : felt*
-) -> (_array_len : felt, _array : felt*):
-    alloc_locals
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-    let (_array : felt*) = alloc()
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-    if recursion_index == arr_len:
-        tempvar syscall_ptr = syscall_ptr
-        tempvar pedersen_ptr = pedersen_ptr
-        tempvar range_check_ptr = range_check_ptr
-        return (recursion_index, _array)
-    end
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-    _array = recursion(arr_len - 1, arr)
-
-    return (recursion_index, _array)
 end
 
 @view
@@ -382,91 +326,30 @@ func is_transaction_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
 end
 
 @storage_var
-func counter() -> (index : felt):
-end
-@storage_var
 func temp_recipients_index() -> (index : felt):
 end
 
-# ) -> (res : felt):
+@external
+func traverse_recipients_map{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    size
+) -> (res : felt):
+    alloc_locals
 
-# @external
-# func check_all_transactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     temp_recipients_ix : felt
-# ) -> (resArray_len : felt, resArray : felt*):
-#     alloc_locals
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
+    if size == 0:
+        let (res) = recipients_transactions_delay.read(0)
+        return (res=res)
+    else:
+        # do the business here!
+        # check each element and do what ever with it
+        let (_index) = temp_recipients_index.read()
+        let (_recipients) = recipients.read(_index)
+        recipients_transactions_delay.write(_index, _recipients.transaction_delay)
+        temp_recipients_index.write(_index + 1)
+    end
+    let (_result) = traverse_recipients_map(size=size - 1)
 
-# # let (temp_index) = counter.read()
-#     let (arr : felt*) = alloc()
-
-# tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-
-# let (temp_index) = counter.read()
-
-# loop:
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-
-# let (recipient) = get_recipient(temp_recipients_ix - 1)
-#     let (temp_index) = counter.read()
-#     assert arr[temp_index] = recipient.transaction_delay
-#     counter.write(temp_index + 1)
-#     let (temp_index) = counter.read()
-#     local temp_index = temp_index
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-
-# temp_recipients_index.write(temp_recipients_ix - 1)
-#     local temp_index = temp_index
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-
-# let (temp_recipients_ix) = temp_recipients_index.read()
-#     local temp_index = temp_index
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-
-# if temp_index == 2:
-#         local temp_index = temp_index
-#         tempvar syscall_ptr = syscall_ptr
-#         tempvar pedersen_ptr = pedersen_ptr
-#         tempvar range_check_ptr = range_check_ptr
-
-# let (recipient) = get_recipient(0)
-#         assert arr[temp_index] = recipient.transaction_delay
-#         local temp_index = temp_index
-#         tempvar syscall_ptr = syscall_ptr
-#         tempvar pedersen_ptr = pedersen_ptr
-#         tempvar range_check_ptr = range_check_ptr
-
-# return (temp_index, arr)
-#     else:
-#         local temp_index = temp_index
-#         tempvar syscall_ptr = syscall_ptr
-#         tempvar pedersen_ptr = pedersen_ptr
-#         tempvar range_check_ptr = range_check_ptr
-
-# return (temp_index, arr)
-#     end
-
-# jmp loop
-#     let (arr : felt*) = alloc()
-
-# return (0, arr)
-#     local temp_index = temp_index
-#     tempvar syscall_ptr = syscall_ptr
-#     tempvar pedersen_ptr = pedersen_ptr
-#     tempvar range_check_ptr = range_check_ptr
-# end
+    return (res=_result)
+end
 
 @view
 func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
