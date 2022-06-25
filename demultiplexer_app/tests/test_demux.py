@@ -3,6 +3,7 @@ import os
 
 import pytest
 import asyncio
+import logging
 from typing import Optional
 from starkware.starknet.testing.starknet import Starknet
 from starkware.starknet.business_logic.state.state import BlockInfo
@@ -13,6 +14,7 @@ from utils.testdata import TestData
 # ////////////////////////////////////////////////////////////////////////////////
 
 CONTRACT_FILE = os.path.join("contracts", "demux.cairo")
+PATH = "/Users/samimchala/Documents/projects/PiggyCubeStartUp/IP/code/back end/demultiplexer-wallet/demultiplexer_app/contracts/demux.cairo"
 MOCK_ADDRESS = 0x0
 
 # ////////////////////////////////////////////////////////////////////////////////
@@ -30,12 +32,6 @@ def compile_contract(contract_name: str) -> ContractDefinition:
     )
 
 
-@pytest.fixture(scope="module")
-async def state(starknet):
-    contract = compile_contract("state.cairo")
-    return await starknet.deploy(contract_def=contract)
-
-
 @pytest.fixture(scope="session")
 def event_loop():
     return asyncio.get_event_loop()
@@ -48,12 +44,17 @@ async def starknet():
 
 @pytest.fixture(scope="session")
 async def contract(starknet):
-    return await starknet.deploy(source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],)
+    return await starknet.deploy(source=PATH, constructor_calldata=[MOCK_ADDRESS])
+
+
+# @pytest.fixture(scope="session")
+# async def contract(starknet):
+#     return await starknet.deploy(source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],)
 
 # ////////////////////////////////////////////////////////////////////////////////
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 async def block_info_mock(starknet):
     class Mock:
         def __init__(self, current_block_info: BlockInfo):
@@ -74,10 +75,10 @@ async def block_info_mock(starknet):
                 self.block_info.sequencer_address
             )
 
-        def set_block_timestamp(self, block_timestamp):
+        def set_block_timestamp(self):
             starknet.state.state.block_info = BlockInfo(
                 self.block_info.block_number,
-                block_timestamp,
+                1666672635,
                 self.block_info.gas_price,
                 self.block_info.sequencer_address
             )
@@ -365,40 +366,54 @@ async def test_compareValues(input, result):
     assert execution_info.result[0] == result
 
 
-# # @pytest.mark.asyncio
-# # async def test_isTransactionReady(contract, block_info_mock):
-# #     """Test isTransactionReady method. check 2 recipients transaction_delay with 1 set in the past and 1 in the future"""
+@pytest.mark.asyncio
+async def test_isTransactionReady():
+    """Test isTransactionReady method. check 2 recipients transaction_delay with 1 set in the past and 1 in the future"""
+    starknet = await Starknet.empty()
 
-# #     block_info_mock.set_block_timestamp(1666672635)  # mimic now timstamp!
+    # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+    # set 1st recipient with an older timestamp: 1646672635
+    await contract.set_recipients(
+        wallet_name=0x736d6368616c6140686f746d61696c2e636f6d,
+        email=0x73616d69406f747373736f2e636f6d,
+        address=0x032e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd,
+        weight=1,
+        recuring_period=0,
+        transaction_delay=1646672635,
+    ).invoke()
+    # set 2nd recipient with a date in the future: 1686701702
+    await contract.set_recipients(
+        wallet_name=0x736d6368616c6140686636f6d,
+        email=0x73616d69406f747373736f2e636f6d,
+        address=0x045e7f10731ed079ed5a6678ab95e4f90ff23391890a140426d723ad82e62bdd,
+        weight=1,
+        recuring_period=0,
+        transaction_delay=1686672635,
+    ).invoke()
 
-# #     # set 1st recipient with an older timestamp: 1646672635
-# #     await TestData.set_recipient1(contract).invoke()
-# #     # set 2nd recipient with a date in the future: 1686701702
-# #     await TestData.set_recipient2(contract).invoke()
+    # Check the result of recipients_number().
+    execution_info = await contract.get_recipients_number().call()
+    assert execution_info.result == (2,)
 
-# #     # Check the result of recipients_number().
-# #     execution_info = await contract.get_recipients_number().call()
-# #     assert execution_info.result == (2,)
+    # Check the result of get_recipient(). is the correct transaction_delay for recipient1
+    execution_info = await contract.get_recipient(0).call()
+    assert execution_info.result[0][5] == 1646672635
 
-# #     # Check the result of get_recipient(). is the correct transaction_delay for recipient1
-# #     execution_info = await contract.get_recipient(0).call()
-# #     assert execution_info.result[0][5] == 1646672635
+    # Check the result of get_recipient(). is the correct transaction_delay for recipient2
+    execution_info = await contract.get_recipient(1).call()
+    assert execution_info.result[0][5] == 1686672635
 
-# #     # Check the result of get_recipient(). is the correct transaction_delay for recipient2
-# #     execution_info = await contract.get_recipient(1).call()
-# #     assert execution_info.result[0][5] == 1686672635
+    execution_info = await contract.is_transaction_ready(0).invoke()
+    assert execution_info.result[0] == 1  # ready to send!
 
-# #     execution_info = await contract.is_transaction_ready(0).invoke()
-# #     assert execution_info.result[0] == 1  # ready to send!
-
-# #     execution_info = await contract.is_transaction_ready(1).invoke()
-# #     assert execution_info.result[0] == 0  # not ready to send!
+    execution_info = await contract.is_transaction_ready(1).invoke()
+    assert execution_info.result[0] == 0  # not ready to send!
 
 
 @pytest.mark.asyncio
-# @pytest.mark.parametrize("result", [
-#     ([0, 1]),
-# ])
 async def test_get_transaction_delay():
     """Test get_transaction_delay method. """
     starknet = await Starknet.empty()
@@ -407,6 +422,7 @@ async def test_get_transaction_delay():
     contract = await starknet.deploy(
         source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
     )
+
     # set 1st recipient
     await TestData.set_recipient1(contract).invoke()
     # set 2nd recipient
@@ -428,3 +444,39 @@ async def test_get_transaction_delay():
 
     execution_info = await contract.get_transaction_delay(1).invoke()
     assert execution_info.result[0] == 1686672635
+
+
+@pytest.mark.asyncio
+async def test_get_transactions_delay(block_info_mock):
+    """Test get_transaction_delay method, check if transactions are ready. """
+    starknet = await Starknet.empty()
+
+    # # Deploy the contract.
+    contract = await starknet.deploy(
+        source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
+    )
+
+    print(CONTRACT_FILE)
+
+    # block_info_mock.set_block_timestamp()
+    # set 1st recipient
+    await TestData.set_recipient1(contract).invoke()
+
+    # # set 2nd recipient
+    await TestData.set_recipient2(contract).invoke()
+
+    recipient_number = await contract.get_recipients_number().call()
+    assert recipient_number.result == (2,)
+
+    execution_info = await contract.get_recipient(wallet_number=0).call()
+    assert execution_info.result[0][5] == TestData.recipient1.transaction_delay
+
+    execution_info = await contract.get_recipient(wallet_number=1).call()
+    assert execution_info.result[0][5] == TestData.recipient2.transaction_delay
+
+    await contract.checkTransactions(2).invoke()
+    execution_info = await contract.get_is_tx_ready(0).invoke()
+    assert execution_info.result[0] == 1
+
+    execution_info = await contract.get_is_tx_ready(1).invoke()
+    assert execution_info.result[0] == 0

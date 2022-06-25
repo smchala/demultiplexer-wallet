@@ -793,3 +793,13 @@ recipient 2
 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 
 1686672635 in the future
+
+--------------------------------------------------------------------------------------------
+25/06/2022
+YAGI
+
+starknet-compile contracts/yagi_router.cairo --output contracts/yagi_router.json --abi contracts/yagi_router.json
+
+tarknet-compile contracts/demux.cairo \
+    --output contracts/demux_compiled.json \
+    --abi contracts/demux_abi.json

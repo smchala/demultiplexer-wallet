@@ -547,9 +547,19 @@
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "name": "size",
+                "type": "felt"
+            }
+        ],
         "name": "checkTransactions",
-        "outputs": [],
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
         "stateMutability": "view",
         "type": "function"
     },
@@ -585,6 +595,22 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "size",
+                "type": "felt"
+            }
+        ],
+        "name": "traverse_recipients_map",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
         "type": "function"
     },
     {

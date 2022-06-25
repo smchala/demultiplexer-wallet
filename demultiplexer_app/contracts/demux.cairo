@@ -1,4 +1,3 @@
-# Declare this file as a StarkNet contract.
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
@@ -19,9 +18,7 @@ from libs.starknetarraymanipulation.contracts.array_manipulation import (
 )
 from starkware.cairo.common.alloc import alloc
 
-# import du types uint256 (Entier non signe sur 256) et des operations dessus
 from starkware.cairo.common.uint256 import Uint256, uint256_add, uint256_le, uint256_check
-# import des conditions mathemiques inferieurs ou egale et different de zero
 from starkware.cairo.common.math import (
     abs_value,
     assert_250_bit,
@@ -52,6 +49,7 @@ from starkware.cairo.common.math_cmp import (
 )
 
 const COUNTER = 0
+const DEPLOYED_YAGI_CONTRACT_ADDRESS_GOERLI = 0X01234
 const MYARGENTX_ADDRESS = 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
 const RECIPIENT_ADDRESS_CHROME = 0x0462369e50f87dfe5cb354fe1c7d4d8f2315d3b6256e576e570edc54ca50b3c8
@@ -80,6 +78,10 @@ func recipients_transactions_delay(index : felt) -> (delay : felt):
 end
 
 @storage_var
+func is_tx_ready(index : felt) -> (is_ready : felt):
+end
+
+@storage_var
 func configuration() -> (configuration : Configuration):
 end
 
@@ -87,13 +89,15 @@ end
 func owner() -> (owner_address : felt):
 end
 
-let (recipients_array : Recipient*) = alloc()
+@storage_var
+func temp_recipients_index() -> (index : felt):
+end
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     owner_address : felt
 ):
-    # owner_address : felt
+    # owner_address : felt # TODO
     owner.write(value=owner_address)
     return ()
 end
@@ -112,11 +116,6 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     let (last_index) = recipients_number.read()
     local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay, ready_to_send=0)
     recipients.write(wallet_number=last_index, value=new_recipients)
-    tempvar syscall_ptr = syscall_ptr
-    tempvar pedersen_ptr = pedersen_ptr
-    tempvar range_check_ptr = range_check_ptr
-    # assert recipients_array[last_index] = new_recipients
-    # set_recipients_array(new_recipients)
     tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
@@ -142,6 +141,14 @@ func get_recipients_number{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     index : felt
 ):
     let (res) = recipients_number.read()
+    return (res)
+end
+
+@view
+func get_is_tx_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    index : felt
+) -> (res : felt):
+    let (res) = is_tx_ready.read(index)
     return (res)
 end
 
@@ -178,7 +185,7 @@ func get_mycaller_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
 end
 
 # THIS WORKED, CHECKED ON VOYAGER!!!! :)
-# NOT SURE HOW TO TEST THIS YET...
+# TODO: NOT SURE HOW TO TEST/mock THIS YET...
 @external
 func increase_recipients_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     ):
@@ -212,7 +219,7 @@ func get_eth_l2_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     alloc_locals
     let (call_calldata : felt*) = alloc()
     assert call_calldata[0] = RECIPIENT_ADDRESS_CHROME
-    # assert call_calldata[1] = nonce
+    # assert call_calldata[1] = nonce # TODO DECLATE AN ONCE STORAGE VAR
     let (res, res1) = call_contract(
         contract_address=ETH_L2_ADDRESS,
         function_selector=BALANCE_OF_HASH,
@@ -263,17 +270,6 @@ func is_configuration_set{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     return (is_configured)
 end
 
-# @external
-# func set_transacions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-#     res : felt
-# ):
-#     alloc_locals
-#     let (isReady) = is_configuration_set()
-#     # assert isReady = 1 #not sure why this fails on goerli
-
-# return (isReady)
-# end
-
 @view
 func call_get_eth_balance{syscall_ptr : felt*, range_check_ptr}(wallet_address : felt) -> (
     res : Uint256
@@ -285,7 +281,7 @@ end
 # //////////////////////////////////////////////////////////////////////////////////////
 #  YAGI will call these functions
 
-# At this moment in time, recurring transactions are not supported
+# At the moment, reocurring transactions are not supported
 # only delayed ones, therefore the number of transactions checked is based on the number of recipients only
 # might have time to introduce recurring feature, will see...
 
@@ -297,12 +293,30 @@ func compareValues{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
     let (is_le_felt) = is_le(a, b)
     return (is_le_felt)
 end
+
 # TODO: checkTransactions will iterate through all transactions and isTransactionReady call for each
 @view
-func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> ():
-    return ()
+func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    size : felt
+) -> (res : felt):
+    alloc_locals
+
+    if size == 0:
+        let (res) = is_tx_ready.read(0)
+        return (res=res)
+    else:
+        # do the business here!
+        # check each element and do what ever with it
+        let (_index) = temp_recipients_index.read()
+        let (_recipient) = recipients.read(_index)
+        let (_is_tx_ready) = is_transaction_ready(_index)
+        is_tx_ready.write(_index, _is_tx_ready)
+        temp_recipients_index.write(_index + 1)
+    end
+    let (_result) = traverse_recipients_map(size=size - 1)
+
+    return (res=_result)
 end
-# //////////////////////////////////////////////////////////////////////////////////////
 
 @view
 func recipientAddress{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -323,10 +337,6 @@ func is_transaction_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (_recipient) = recipients.read(index)
     let (is_le_felt) = is_le(_recipient.transaction_delay, _blockTimestamp)
     return (is_le_felt)
-end
-
-@storage_var
-func temp_recipients_index() -> (index : felt):
 end
 
 @external
@@ -351,6 +361,8 @@ func traverse_recipients_map{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     return (res=_result)
 end
 
+# //////////////////////////////////////////////////////////////////////////////////////
+# YAGI router, will invoke these functions
 @view
 func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     bool : felt
@@ -360,11 +372,23 @@ end
 
 @view
 func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> ():
-    return ()
+    ) -> (block_time_stamp:felt):
+    let (_blockTimestamp) = get_block_timestamp()
+    return (block_time_stamp = _blockTimestamp)
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
+# YAGI, setting up demux address
+
+# set_demux_address(DEPLOYED_YAGI_CONTRACT_ADDRESS_GOERLI, demux_address=...)
+@contract_interface
+namespace IContractYagi:
+    func set_demux_address(demux_address : felt) -> ():
+    end
+end
+
+# //////////////////////////////////////////////////////////////////////////////////////
+# ERC20
 
 @contract_interface
 namespace IERC20:
@@ -396,10 +420,14 @@ namespace IERC20:
     end
 end
 
+
+
+
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # section: DO NOT REMOVE!
 # TODO: set up configuration to use this converter so we can use the original planned set up with decimals, 48 to 63
-# check doc for details
+# check doc for details (not public yet)
+
 @storage_var
 func decimal_conversion_index() -> (index : felt):
 end
@@ -473,3 +501,135 @@ end
 #     let (account_from_balance) = get_account_token_balance(
 #         account_id=account_id, token_type=token_from
 #     )
+
+# TODO!! check signatures
+# TAKEN FROM https://hackmd.io/@sambarnes/BJvGs0JpK
+# # Vehicle signers can attest to a state hash -- data storage & verification off-chain
+# @external
+# func attest_state{
+#         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr,
+#         ecdsa_ptr : SignatureBuiltin*}(vehicle_id : felt, nonce : felt, state_hash : felt):
+#     # Note the addition of an ecdsa_ptr implicit argument, this is required in functions
+#     # that verify ECDSA signatures.
+
+# # Verify the vehicle has been registered with a signer
+#     let (signer_public_key) = vehicle_signer_public_key.read(vehicle_id=vehicle_id)
+#     assert_not_zero(signer_public_key)
+
+# # Make sure the current nonce was used
+#     let (expected_nonce) = vehicle_nonce.read(vehicle_id=vehicle_id)
+#     assert expected_nonce - nonce = 0
+
+# # Expected Signed Message = H( nonce + H( vehicle_id , H( signer_public_key ) ) )
+#     let (h1) = hash2{hash_ptr=pedersen_ptr}(state_hash, 0)
+#     let (h2) = hash2{hash_ptr=pedersen_ptr}(vehicle_id, h1)
+#     let (message_hash) = hash2{hash_ptr=pedersen_ptr}(nonce, h2)
+
+# # Verify signature is valid and covers the expected signed message
+#     let (sig_len : felt, sig : felt*) = get_tx_signature()
+#     assert sig_len = 2 # ECDSA signatures have two parts, r and s
+#     verify_ecdsa_signature(
+#         message=message_hash, public_key=signer_public_key, signature_r=sig[0], signature_s=sig[1])
+#     # If the contract passes ^this line, the signaure verification passed.
+#     # Otherwise, the execution would halt and the transaction would revert.
+
+# # Register state & increment nonce
+#     vehicle_state.write(vehicle_id=vehicle_id, nonce=nonce, value=state_hash)
+#     vehicle_nonce.write(vehicle_id=vehicle_id, value=nonce + 1)
+#     return ()
+# end
+# test examples
+# @pytest.mark.asyncio
+# async def test_attest_state_invalid_nonce(contract_factory):
+#     """Should fail with invalid nonce"""
+#     _, contract = contract_factory
+
+# state_hash = 1234
+#     nonce = 666
+#     message_hash = pedersen_hash(
+#         nonce, pedersen_hash(some_vehicle, pedersen_hash(state_hash, 0))
+#     )
+#     sig_r, sig_s = sign(msg_hash=message_hash, priv_key=some_signer_secret)
+
+# with pytest.raises(StarkException):
+#         await contract.attest_state(
+#             vehicle_id=some_vehicle,
+#             nonce=nonce,
+#             state_hash=state_hash,
+#         ).invoke(signature=[sig_r, sig_s])
+
+# @pytest.mark.asyncio
+# async def test_attest_state_invalid_signature(contract_factory):
+#     """Should fail with invalid nonce"""
+#     _, contract = contract_factory
+#     with pytest.raises(StarkException):
+#         await contract.attest_state(
+#             vehicle_id=some_vehicle,
+#             nonce=0,
+#             state_hash=1234,
+#         ).invoke(signature=[123456789, 987654321])
+
+# @pytest.mark.asyncio
+# async def test_attest_state(contract_factory):
+#     """Should successfully attest to a state hash & increment nonce"""
+#     _, contract = contract_factory
+
+# state_hash = 1234
+#     nonce = 0
+#     message_hash = pedersen_hash(
+#         nonce, pedersen_hash(some_vehicle, pedersen_hash(state_hash, 0))
+#     )
+#     sig_r, sig_s = sign(msg_hash=message_hash, priv_key=some_signer_secret)
+
+# await contract.attest_state(
+#         vehicle_id=some_vehicle,
+#         nonce=nonce,
+#         state_hash=state_hash,
+#     ).invoke(signature=[sig_r, sig_s])
+
+# # Check the nonce was incremented
+#     new_nonce = await contract.get_nonce(vehicle_id=some_vehicle).call()
+#     assert new_nonce.result == (nonce + 1,)
+
+# import sys
+# from starkware.crypto.signature.signature import (
+#     pedersen_hash, sign)
+
+# priv_key = 10000000 #pull from env or set to your priv key
+# num_args = 0
+# prev = 0
+# curr = 0
+# counter = 1
+# args = []
+# if(len(sys.argv) > 1):
+#     num_args = len(sys.argv) - 1
+#     curr = int(sys.argv[1])
+#     for index, value in enumerate(sys.argv):
+#         if index >=1:
+#             args.append(int(value))
+
+# def hash_calculator(counter, prev, curr, args, length):
+#     if length == 0:
+#         return 0
+#     else:
+#         prev = pedersen_hash(prev,curr)
+#         if counter < length:
+#             curr = args[counter]
+#             counter +=1
+#             return hash_calculator(counter, prev, curr, args, length)
+#         else:
+#             return pedersen_hash(prev, length)
+
+# calc_hash = hash_calculator(counter, prev, curr, args, len(args))
+
+# def signature(hash, priv_key):
+#     if hash ==0:
+#         return (0,0)
+#     else:
+#         return sign(
+#             msg_hash = hash,
+#             priv_key = priv_key
+#         )
+
+# r,s = signature(calc_hash, priv_key)
+# print(r, s, sep=', ')
