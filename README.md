@@ -59,7 +59,6 @@ Still have to learn how to mock the syscalls.get_caller_address to test assert_o
 
 
 
-## Goal:
 #### Configuration: 
 
 ##### weights: 
@@ -76,42 +75,6 @@ Still have to learn how to mock the syscalls.get_caller_address to test assert_o
 - Event? Nuke the transaction, voluntary from the user, only for delayed transaction
 - ExpiryDate
 
-Example
-```{
-   "configuration":{
-      "send_amount":3,
-      "send_type":"coin",
-      "recurring":{
-         "value":0,
-         "period":0
-      },
-      "equal_weights":1,
-      "multisig":0,
-      "cancel":{
-         "is_manual":1,
-         "expiry_date":1234567
-      },
-      "recipients":[
-         {
-            "address":"0x",
-            "weight":1,
-            "delay":0
-         },
-         {
-            "address":"0x",
-            "weight":1,
-            "delay":0
-         },
-         {
-            "address":"0x",
-            "weight":1,
-            "delay":0
-         }
-      ]
-   }
-}
-```
-
 
 
 ## 1st steps
@@ -124,7 +87,7 @@ Example
 - Validate all configs, weights….
 - Store all into the contract
 - Create logic to handle splitting the funds
-- Look at integrating **yogi** for one off shot task in the future
+- Look at integrating **yogi** for one off shot task in the future (*** I m around here ***)
 - Check how to sign for future transfers
 - Do we use a placeholder for the funds, how to lock the funds?
 - Cancellation? God mode: define the boundaries
