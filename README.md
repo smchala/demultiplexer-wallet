@@ -19,6 +19,16 @@ And/or
 
 - Send funds to multiple users at multiple dates (recurring transactions)
 
+## Potential use cases:
+
+Demux should be the heart of the follwing dapps, other components should/will be added
+
+- For individuals: Saving accounts (automatic), Birthday present (money, messages, videos, nft), pay bills or subscriptions, Wills (hooked up to legal entities e.g. decentralised solicitors?)...
+- For Friends/family/daos: Pocket money kids, help, contributing to projects, lottery(random number generato)...
+- For companies: Payroll, pay taxes, supply chain, discounts...
+
+
+
 Thanks to account abstractions in Starknet we can sign multiple calls at once for great user experience (does not apply to recurring transactions, still thinking about it!)
 
 #### Caveats:
