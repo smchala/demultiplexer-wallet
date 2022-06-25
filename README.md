@@ -9,19 +9,19 @@ Demux app is a Starknet smart contract that will allow the automation of transac
 
 A user will be able to:
 
-Send funds to multiple wallets
+- Send funds to multiple wallets
 
 And/or
 
-Send funds at a specific date in the future
+- Send funds at a specific date in the future
 
 And/or
 
-Send funds to multiple users at multiple dates (recurring transactions)
+- Send funds to multiple users at multiple dates (recurring transactions)
 
 Thanks to account abstractions in Starknet we can sign multiple calls at once for great user experience (does not apply to recurring transactions, still thinking about it!)
 
-Caveats:
+#### Caveats:
 
 A transaction will be cancelled if there are not enough funds
 
@@ -47,11 +47,11 @@ Only the deployer can set it up, no operation can be done by another address (ex
 Assumption if the check for funds fails the current transaction is removed from the list of transactions list
 
 
-- Outstanding: 
+#### Outstanding: 
 
 Need to create a web interface to use argentX sdk to be able to sign multiple transactions
 
-- Note:
+#### Note:
 
 Demux is still a draft
 Some tests are present for demux, but this is more as a learning exercise than production grade tests.
