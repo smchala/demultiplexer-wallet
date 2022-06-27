@@ -1,0 +1,10 @@
+starknet-compile contracts/yagi_router.cairo --output contracts/yagi_router.json --abi contracts/yagi_router_abi.json
+
+
+starknet deploy --contract contracts/yagi_router_compiled.json --input 0x0438B49f89FbD98dc2EfedbFF1A3E85C2798E22ae66E5d6Ed8dcBb0a0f6A6Bf6
+
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/yagi_router.json  --input 0x0438B49f89FbD98dc2EfedbFF1A3E85C2798E22ae66E5d6Ed8dcBb0a0f6A6Bf6 --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x0221b6a7865025ca17a24eb7ab1c9423fffe8a92c61311e6b2e420239606cd6d
+Transaction hash: 0x58f99e09193f33eb25c5f4f7d42cc8ded1051c8f69d3bade5252b2542483fb

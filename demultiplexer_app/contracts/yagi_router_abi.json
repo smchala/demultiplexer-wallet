@@ -1,0 +1,53 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "_owner_address",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [],
+        "name": "probeTask",
+        "outputs": [
+            {
+                "name": "bool",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "executeTask",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_demux_contract_address",
+                "type": "felt"
+            }
+        ],
+        "name": "set_demux_address",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_new_owner_address",
+                "type": "felt"
+            }
+        ],
+        "name": "set_owner",
+        "outputs": [],
+        "type": "function"
+    }
+]

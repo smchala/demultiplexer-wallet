@@ -385,6 +385,10 @@ end
 namespace IContractYagi:
     func set_demux_address(demux_address : felt) -> ():
     end
+
+    
+    func set_owner(owner_address : felt) -> ():
+    end
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
