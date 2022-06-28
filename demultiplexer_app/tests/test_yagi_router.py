@@ -11,6 +11,9 @@ MOCK_ADDRESS = 1234  # owner's address
 
 # Note:
 # due to the fact that I can't mock get_caller_address, for the tests to pass need to comment out the relevant asserts in yagi_router functions
+# Might have fount it:
+# https://github.com/starkware-libs/cairo-lang/blob/167b28bcd940fd25ea3816204fa882a0b0a49603/src/starkware/starknet/testing/contract.py
+# https://github.com/starkware-libs/cairo-lang/blob/167b28bcd940fd25ea3816204fa882a0b0a49603/src/starkware/starknet/testing/contract_test.py
 
 
 @pytest.mark.asyncio

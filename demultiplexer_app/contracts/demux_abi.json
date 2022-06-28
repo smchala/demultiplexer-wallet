@@ -392,6 +392,23 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "get_is_tx_ready",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "get_configuration",
         "outputs": [
@@ -628,7 +645,12 @@
     {
         "inputs": [],
         "name": "execute_demux_transfers",
-        "outputs": [],
+        "outputs": [
+            {
+                "name": "block_time_stamp",
+                "type": "felt"
+            }
+        ],
         "stateMutability": "view",
         "type": "function"
     },

@@ -2,6 +2,9 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.memcpy import memcpy
+from starkware.cairo.common.default_dict import default_dict_new, default_dict_finalize
+from starkware.cairo.common.dict import dict_write, dict_update, dict_new, dict_read
+from starkware.cairo.common.dict_access import DictAccess
 
 from starkware.starknet.common.syscalls import (
     call_contract,
@@ -19,37 +22,10 @@ from libs.starknetarraymanipulation.contracts.array_manipulation import (
 from starkware.cairo.common.alloc import alloc
 
 from starkware.cairo.common.uint256 import Uint256, uint256_add, uint256_le, uint256_check
-from starkware.cairo.common.math import (
-    abs_value,
-    assert_250_bit,
-    assert_in_range,
-    assert_le,
-    assert_le_felt,
-    assert_lt,
-    assert_lt_felt,
-    assert_nn,
-    assert_nn_le,
-    assert_not_equal,
-    assert_not_zero,
-    horner_eval,
-    sign,
-    signed_div_rem,
-    split_felt,
-    split_int,
-    sqrt,
-    unsigned_div_rem,
-)
-from starkware.cairo.common.math_cmp import (
-    is_in_range,
-    is_le,
-    is_le_felt,
-    is_nn,
-    is_nn_le,
-    is_not_zero,
-)
+from starkware.cairo.common.math import assert_not_zero, sign, signed_div_rem, unsigned_div_rem
+from starkware.cairo.common.math_cmp import is_le, is_le_felt
 
-const COUNTER = 0
-const DEPLOYED_YAGI_CONTRACT_ADDRESS_GOERLI = 0X01234
+const YAGI_ROUTER_GOERLI_ADDRESS = 0x0221b6a7865025ca17a24eb7ab1c9423fffe8a92c61311e6b2e420239606cd6d
 const MYARGENTX_ADDRESS = 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6
 const RECIPIENT_ADDRESS = 0x00b68ad3d5a97de6a013d5b22f70f1b39de67f182afd6f84936bb1b325d046b1
 const RECIPIENT_ADDRESS_CHROME = 0x0462369e50f87dfe5cb354fe1c7d4d8f2315d3b6256e576e570edc54ca50b3c8
@@ -93,10 +69,22 @@ end
 func temp_recipients_index() -> (index : felt):
 end
 
+@storage_var
+func current_transaction_to_be_checked() -> (owner_address : felt):
+end
+
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     owner_address : felt
 ):
+    # Experimenting with dictionaries, potentially use them to update the state of all transactions
+    alloc_locals
+    let (local my_dict_start) = default_dict_new(default_value=7)
+    let my_dict = my_dict_start
+    dict_write{dict_ptr=my_dict}(key=1, new_value=8)
+    let (local val : felt) = dict_read{dict_ptr=my_dict}(key=1)
+    assert val = 8
+
     # owner_address : felt # TODO
     owner.write(value=owner_address)
     return ()
@@ -308,7 +296,6 @@ func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
         # do the business here!
         # check each element and do what ever with it
         let (_index) = temp_recipients_index.read()
-        let (_recipient) = recipients.read(_index)
         let (_is_tx_ready) = is_transaction_ready(_index)
         is_tx_ready.write(_index, _is_tx_ready)
         temp_recipients_index.write(_index + 1)
@@ -372,21 +359,20 @@ end
 
 @view
 func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> (block_time_stamp:felt):
+    ) -> (block_time_stamp : felt):
     let (_blockTimestamp) = get_block_timestamp()
-    return (block_time_stamp = _blockTimestamp)
+    return (block_time_stamp=_blockTimestamp)
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
 # YAGI, setting up demux address
 
-# set_demux_address(DEPLOYED_YAGI_CONTRACT_ADDRESS_GOERLI, demux_address=...)
+# set_demux_address(YAGI_ROUTER_GOERLI_ADDRESS, demux_address=...)
 @contract_interface
 namespace IContractYagi:
     func set_demux_address(demux_address : felt) -> ():
     end
 
-    
     func set_owner(owner_address : felt) -> ():
     end
 end
@@ -423,9 +409,6 @@ namespace IERC20:
     func approve(spender : felt, amount : Uint256) -> (success : felt):
     end
 end
-
-
-
 
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # section: DO NOT REMOVE!
