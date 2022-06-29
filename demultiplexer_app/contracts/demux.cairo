@@ -22,7 +22,13 @@ from libs.starknetarraymanipulation.contracts.array_manipulation import (
 from starkware.cairo.common.alloc import alloc
 
 from starkware.cairo.common.uint256 import Uint256, uint256_add, uint256_le, uint256_check
-from starkware.cairo.common.math import assert_not_zero, sign, signed_div_rem, unsigned_div_rem
+from starkware.cairo.common.math import (
+    assert_not_zero,
+    assert_not_equal,
+    sign,
+    signed_div_rem,
+    unsigned_div_rem,
+)
 from starkware.cairo.common.math_cmp import is_le, is_le_felt
 
 const YAGI_ROUTER_GOERLI_ADDRESS = 0x0221b6a7865025ca17a24eb7ab1c9423fffe8a92c61311e6b2e420239606cd6d
@@ -70,27 +76,20 @@ func temp_recipients_index() -> (index : felt):
 end
 
 @storage_var
-func current_transaction_to_be_checked() -> (owner_address : felt):
+func current_recipient_index_to_check_transaction_delay() -> (owner_address : felt):
 end
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     owner_address : felt
 ):
-    # Experimenting with dictionaries, potentially use them to update the state of all transactions
-    alloc_locals
-    let (local my_dict_start) = default_dict_new(default_value=7)
-    let my_dict = my_dict_start
-    dict_write{dict_ptr=my_dict}(key=1, new_value=8)
-    let (local val : felt) = dict_read{dict_ptr=my_dict}(key=1)
-    assert val = 8
-
     # owner_address : felt # TODO
     owner.write(value=owner_address)
     return ()
 end
 
 # TODO: email-> might need to pass it as a blob, pgp maybe? dont want spamming :)
+# Assuming the client will set the recipients ordered by transactions delay
 @external
 func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt,
@@ -172,14 +171,10 @@ func get_mycaller_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     return (caller)
 end
 
-# THIS WORKED, CHECKED ON VOYAGER!!!! :)
-# TODO: NOT SURE HOW TO TEST/mock THIS YET...
 @external
 func increase_recipients_balance{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     ):
     alloc_locals
-    # let (caller) = get_caller_address()
-    # return (caller)
 
     let (call_calldata : felt*) = alloc()
 
@@ -354,14 +349,43 @@ end
 func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     bool : felt
 ):
+    alloc_locals
+
+    # Make sure yagi_router is calling
+    let (_caller_address) = get_caller_address()
+    assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
+
+    # Current assumption is all recipients are ordered by transaction_delay, who orders them is yet to be
+    # finalised, more likely demux should take care of that but for now the assumption isthe list is ordered.
+    # current_recipient_index_to_check_transaction_delay stores the current transaction that is needed to use so it can be checked
+    # (corresponding recipient's transaction delay)
+
+    let (_current_recipient_to_check) = current_recipient_index_to_check_transaction_delay.read()
+    let (_recipients_number) = recipients_number.read()
+    # if there _current_recipient_to_check is = or > then there is a problem!
+    assert_not_equal(_current_recipient_to_check, _recipients_number)
+    let (_is_transaction_ready) = is_transaction_ready(_current_recipient_to_check)
+
+    if _is_transaction_ready == 1:
+        current_recipient_index_to_check_transaction_delay.write(_current_recipient_to_check + 1)
+        return (1)
+    end
+
     return (0)
 end
 
 @view
 func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> (block_time_stamp : felt):
+    ) -> (block_time_stamp : felt, current_recipient_to_check : felt):
+    # Make sure yagi_router is calling
+    let (_caller_address) = get_caller_address()
+    assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
+
+    let (_current_recipient_to_check) = current_recipient_index_to_check_transaction_delay.read()
     let (_blockTimestamp) = get_block_timestamp()
-    return (block_time_stamp=_blockTimestamp)
+    return (
+        block_time_stamp=_blockTimestamp, current_recipient_to_check=_current_recipient_to_check
+    )
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////

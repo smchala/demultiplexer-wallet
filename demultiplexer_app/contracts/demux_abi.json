@@ -649,6 +649,10 @@
             {
                 "name": "block_time_stamp",
                 "type": "felt"
+            },
+            {
+                "name": "current_recipient_to_check",
+                "type": "felt"
             }
         ],
         "stateMutability": "view",
