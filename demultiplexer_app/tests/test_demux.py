@@ -371,7 +371,7 @@ async def test_isTransactionReady():
         source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
     )
     # set 1st recipient with an older timestamp: 1646672635
-    update_starknet_block(starknet)
+    update_starknet_block(starknet, 1666672635)
     # set 1st recipient
     await TestData.set_recipient1(contract).invoke()
 
@@ -439,7 +439,7 @@ async def test_get_transactions_delay():
     contract = await starknet.deploy(
         source=CONTRACT_FILE, constructor_calldata=[MOCK_ADDRESS],
     )
-    update_starknet_block(starknet)
+    update_starknet_block(starknet, 1666672635)
     # set 1st recipient
     await TestData.set_recipient1(contract).invoke()
 
