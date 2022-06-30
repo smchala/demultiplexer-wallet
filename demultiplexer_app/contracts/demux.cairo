@@ -79,6 +79,10 @@ end
 func current_recipient_index_to_check_transaction_delay() -> (owner_address : felt):
 end
 
+@storage_var
+func execute_task_test(recipient_index : felt) -> (time_stamp : felt):
+end
+
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     owner_address : felt
@@ -121,6 +125,15 @@ func get_recipient{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
     tempvar range_check_ptr = range_check_ptr
     let (res) = recipients.read(wallet_number=wallet_number)
     return (res)
+end
+
+# FOR TESTING YAGI ONLY
+@view
+func get_execute_task_test{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    index : felt
+) -> (time_stamp : felt):
+    let (_res) = execute_task_test.read(index)
+    return (time_stamp=_res)
 end
 
 @view
@@ -375,17 +388,16 @@ func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 end
 
 @view
-func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> (block_time_stamp : felt, current_recipient_to_check : felt):
+func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     # Make sure yagi_router is calling
     let (_caller_address) = get_caller_address()
     assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
-
+    # FOR TESTING
     let (_current_recipient_to_check) = current_recipient_index_to_check_transaction_delay.read()
     let (_blockTimestamp) = get_block_timestamp()
-    return (
-        block_time_stamp=_blockTimestamp, current_recipient_to_check=_current_recipient_to_check
-    )
+    execute_task_test.write(_current_recipient_to_check, _blockTimestamp)
+
+    return ()
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
