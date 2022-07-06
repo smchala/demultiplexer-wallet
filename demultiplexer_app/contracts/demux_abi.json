@@ -2,6 +2,97 @@
     {
         "members": [
             {
+                "name": "wallet_name",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "email",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "weight",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "recuring_period",
+                "offset": 4,
+                "type": "felt"
+            },
+            {
+                "name": "transaction_delay",
+                "offset": 5,
+                "type": "felt"
+            },
+            {
+                "name": "ready_to_send",
+                "offset": 6,
+                "type": "felt"
+            }
+        ],
+        "name": "Recipient",
+        "size": 7,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "address",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "state",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "TransactionState",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "send_amount",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "send_type",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "equal_weights",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "multi_sig",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "expiry_date",
+                "offset": 4,
+                "type": "felt"
+            }
+        ],
+        "name": "Configuration",
+        "size": 5,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
                 "name": "low",
                 "offset": 0,
                 "type": "felt"
@@ -15,28 +106,6 @@
         "name": "Uint256",
         "size": 2,
         "type": "struct"
-    },
-    {
-        "data": [
-            {
-                "name": "account",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "Paused",
-        "type": "event"
-    },
-    {
-        "data": [
-            {
-                "name": "account",
-                "type": "felt"
-            }
-        ],
-        "keys": [],
-        "name": "Unpaused",
-        "type": "event"
     },
     {
         "inputs": [
@@ -332,6 +401,35 @@
         "type": "constructor"
     },
     {
+        "inputs": [],
+        "name": "get_current_recipient",
+        "outputs": [
+            {
+                "name": "current_recipient",
+                "type": "Recipient"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "get_demux_transaction_state",
+        "outputs": [
+            {
+                "name": "state",
+                "type": "TransactionState"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "name": "address",
@@ -373,7 +471,36 @@
         "outputs": [
             {
                 "name": "recepients",
-                "type": "(wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt, ready_to_send : felt)"
+                "type": "Recipient"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "name": "get_execute_task_test",
+        "outputs": [
+            {
+                "name": "time_stamp",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_current_recipient_index_to_check_transaction_delay",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
             }
         ],
         "stateMutability": "view",
@@ -414,7 +541,7 @@
         "outputs": [
             {
                 "name": "res",
-                "type": "(send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)"
+                "type": "Configuration"
             }
         ],
         "stateMutability": "view",
@@ -566,40 +693,6 @@
     {
         "inputs": [
             {
-                "name": "size",
-                "type": "felt"
-            }
-        ],
-        "name": "checkTransactions",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "index",
-                "type": "felt"
-            }
-        ],
-        "name": "recipientAddress",
-        "outputs": [
-            {
-                "name": "bool",
-                "type": "felt"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "index",
                 "type": "felt"
             }
@@ -617,11 +710,77 @@
     {
         "inputs": [
             {
-                "name": "size",
+                "name": "transaction_delay",
                 "type": "felt"
             }
         ],
-        "name": "traverse_recipients_map",
+        "name": "is_recipient_ready",
+        "outputs": [
+            {
+                "name": "is_le_felt",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "size",
+                "type": "felt"
+            },
+            {
+                "name": "_index",
+                "type": "felt"
+            }
+        ],
+        "name": "check_recipients_transactions_delays",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_is_transaction_ready",
+                "type": "felt"
+            },
+            {
+                "name": "current_state",
+                "type": "felt"
+            },
+            {
+                "name": "next_step",
+                "type": "felt"
+            }
+        ],
+        "name": "get_transaction_state",
+        "outputs": [
+            {
+                "name": "new_state",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "size",
+                "type": "felt"
+            },
+            {
+                "name": "_index",
+                "type": "felt"
+            }
+        ],
+        "name": "recipients_execution_tasks",
         "outputs": [
             {
                 "name": "res",
@@ -647,15 +806,10 @@
         "name": "execute_demux_transfers",
         "outputs": [
             {
-                "name": "block_time_stamp",
-                "type": "felt"
-            },
-            {
-                "name": "current_recipient_to_check",
+                "name": "block_time",
                 "type": "felt"
             }
         ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

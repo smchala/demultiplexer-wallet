@@ -8,3 +8,6 @@ starknet deploy --contract contracts/yagi_router_compiled.json --input 0x0438B49
 Deploy transaction was sent.
 Contract address: 0x0221b6a7865025ca17a24eb7ab1c9423fffe8a92c61311e6b2e420239606cd6d
 Transaction hash: 0x58f99e09193f33eb25c5f4f7d42cc8ded1051c8f69d3bade5252b2542483fb
+
+
+starknet tx_status --hash 0x58f99e09193f33eb25c5f4f7d42cc8ded1051c8f69d3bade5252b2542483fb

@@ -803,3 +803,53 @@ starknet-compile contracts/yagi_router.cairo --output contracts/yagi_router.json
 tarknet-compile contracts/demux.cairo \
     --output contracts/demux_compiled.json \
     --abi contracts/demux_abi.json
+
+
+--------------------------------------------------------------------------------------------
+30/06/2022
+
+yagi_router deployed and whote listed by yagi finance
+https://yagi.fi/automation id 20
+
+Need to deploy the latest demux contract
+set yagi router 
+
+starknet-compile contracts/demux.cairo --output contracts/demux_compiled.json --abi contracts/demux_abi.json
+
+--contract contracts/demux_compiled.json --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6 --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x06ff3f2a921918ddc18ee8cd6115a49378a98fa16de5313b90375d7c202edaa6
+Transaction hash: 0x4ee6243be510b9b3e3dc2fd5ffedb51c1d40fd2ec4d439e9fe90b52ad12520d
+
+starknet tx_status --hash 0x4ee6243be510b9b3e3dc2fd5ffedb51c1d40fd2ec4d439e9fe90b52ad12520d --network alpha-goerli
+
+
+TESTING WHY YAGI ROUTER NOT CALLING demux
+removed the checks for debugging
+
+demux
+
+starknet-compile contracts/demux.cairo --output contracts/demux_compiled.json --abi contracts/demux_abi.json
+starknet deploy --contract contracts/demux_compiled.json --input 0x0438b49f89fbd98dc2efedbff1a3e85c2798e22ae66e5d6ed8dcbb0a0f6a6bf6 --network alpha-goerli
+
+Deploy transaction was sent.
+Contract address: 0x012cb7bfe7da51fee61451658c107e762e3c8350284541354cc66161849d9db8
+Transaction hash: 0x4b14abc5a59ee3a10cac671524ff77944c2d607ed9f2cc68e7be59cdaae7990
+
+starknet tx_status --hash 0x4b14abc5a59ee3a10cac671524ff77944c2d607ed9f2cc68e7be59cdaae7990 --network alpha-goerli
+
+
+yagi
+
+starknet-compile contracts/yagi_router.cairo --output contracts/yagi_router.json --abi contracts/yagi_compiled_router.json
+
+starknet deploy --contract contracts/yagi_router.json --input 0x0438B49f89FbD98dc2EfedbFF1A3E85C2798E22ae66E5d6Ed8dcBb0a0f6A6Bf6 --network alpha-goerli
+
+(cairo_venv) samimchala@Samis-MacBook-Pro-2 demultiplexer_app % starknet deploy --contract contracts/yagi_router.json  --input 0x0438B49f89FbD98dc2EfedbFF1A3E85C2798E22ae66E5d6Ed8dcBb0a0f6A6Bf6 --network alpha-goerli
+Deploy transaction was sent.
+Contract address: 0x05a54b350978898bd3a4b99000d9c0cc75ef57ff2ebe850694b14a38da32ff06
+Transaction hash: 0x5c1c66270aeca9db99de394b103b6d37019df70cf0b9f2c9826ca5b65f5af8e
+
+starknet tx_status --hash 0x5c1c66270aeca9db99de394b103b6d37019df70cf0b9f2c9826ca5b65f5af8e --network alpha-goerli
+
+

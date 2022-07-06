@@ -24,8 +24,49 @@
     },
     {
         "inputs": [],
+        "name": "get_blocktime",
+        "outputs": [
+            {
+                "name": "time",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_demux_address_test",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_check_probe_task_test",
+        "outputs": [
+            {
+                "name": "bool",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "executeTask",
-        "outputs": [],
+        "outputs": [
+            {
+                "name": "block_time",
+                "type": "felt"
+            }
+        ],
         "type": "function"
     },
     {

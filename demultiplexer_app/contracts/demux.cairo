@@ -13,12 +13,7 @@ from starkware.starknet.common.syscalls import (
     get_contract_address,
     get_block_timestamp,
 )
-from libs.cairocontracts.src.openzeppelin.security.pausable import Pausable
-from libs.starknetarraymanipulation.contracts.array_manipulation import (
-    reverse,
-    add_at,
-    remove_first,
-)
+from libs.starknetarraymanipulation.contracts.array_manipulation import reverse
 from starkware.cairo.common.alloc import alloc
 
 from starkware.cairo.common.uint256 import Uint256, uint256_add, uint256_le, uint256_check
@@ -39,10 +34,51 @@ const ETH_L2_ADDRESS = 0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82
 # use utils/util.py to get the function hash
 const BALANCE_OF_HASH = 0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e
 const INCREASE_BALANCE_HASH = 0x362398bec32bc0ebb411203221a35a0301193a96f317ebe5e40be9f60d15320
+const READY_STATE = 1
+const PENDING_STATE = 2
+const READY_FOR_EXECUTION_STATE = 3
+const COMPLETED_STATE = 4
+const FAILED_STATE = 5
+const CANCELLED_STATE = 6
+const EXPIRED_STATE = 7
+
+# Configuration struct
+struct Configuration:
+    member send_amount : felt
+    member send_type : felt
+    member equal_weights : felt
+    member multi_sig : felt
+    member expiry_date : felt
+end
 
 # address -> name.eth would be a cool user experience
-using Recipient = (wallet_name : felt, email : felt, address : felt, weight : felt, recuring_period : felt, transaction_delay : felt, ready_to_send : felt)
-using Configuration = (send_amount : felt, send_type : felt, equal_weights : felt, multi_sig : felt, expiry_date : felt)
+# Recipient struct
+struct Recipient:
+    member wallet_name : felt
+    member email : felt
+    member address : felt
+    member weight : felt
+    member recuring_period : felt
+    member transaction_delay : felt
+    member ready_to_send : felt
+end
+
+# Transaction state
+#
+# initialised -> 0
+# ready -> 1
+# pending -> 2
+# completed -> 3
+# failed -> 4
+# cancelled -> 5
+# expired -> 6
+# Ready: once we have all recipients set and signaures done then we can set it to 1
+# Pending: whe we start getting yagi probe task calls we are in a pending state
+# Completed: when yagi invoke execute task we can mark a transaction completed
+struct TransactionState:
+    member address : felt
+    member state : felt
+end
 
 @storage_var
 func recipients_number() -> (index : felt):
@@ -76,7 +112,17 @@ func temp_recipients_index() -> (index : felt):
 end
 
 @storage_var
-func current_recipient_index_to_check_transaction_delay() -> (owner_address : felt):
+func current_recipient_index_to_check_transaction_delay() -> (index : felt):
+end
+@storage_var
+func current_recipient() -> (recipient : Recipient):
+end
+@storage_var
+func current_index() -> (index : felt):
+end
+
+@storage_var
+func demux_state(index : felt) -> (demux_transaction_state : TransactionState):
 end
 
 @storage_var
@@ -92,6 +138,22 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     return ()
 end
 
+@view
+func get_current_recipient{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    current_recipient : Recipient
+):
+    let (_current_recipient) = current_recipient.read()
+    return (current_recipient=_current_recipient)
+end
+
+@view
+func get_demux_transaction_state{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    index : felt
+) -> (state : TransactionState):
+    let (_state) = demux_state.read(index)
+    return (_state)
+end
+
 # TODO: email-> might need to pass it as a blob, pgp maybe? dont want spamming :)
 # Assuming the client will set the recipients ordered by transactions delay
 @external
@@ -105,13 +167,19 @@ func set_recipients{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ):
     alloc_locals
     let (last_index) = recipients_number.read()
-    local new_recipients : Recipient = (wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay, ready_to_send=0)
+    local new_recipients : Recipient = Recipient(wallet_name=wallet_name, email=email, address=address, weight=weight, recuring_period=recuring_period, transaction_delay=transaction_delay, ready_to_send=0)
     recipients.write(wallet_number=last_index, value=new_recipients)
     tempvar syscall_ptr = syscall_ptr
     tempvar pedersen_ptr = pedersen_ptr
     tempvar range_check_ptr = range_check_ptr
+    # update demux transaction state, todo: make sure no duplicate addresses entry
+    # for testing we set to 1, once signature is done then we can set 1 then as expected
+    demux_state.write(last_index, TransactionState(address=address, state=PENDING_STATE))
     # keep track of recipients
     recipients_number.write(last_index + 1)
+    if last_index == 0:
+        current_recipient.write(new_recipients)
+    end
     return ()
 end
 
@@ -126,7 +194,7 @@ func get_recipient{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
     let (res) = recipients.read(wallet_number=wallet_number)
     return (res)
 end
-
+# //////////////////////////////////////////////////////////////////////////////////////
 # FOR TESTING YAGI ONLY
 @view
 func get_execute_task_test{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -135,6 +203,16 @@ func get_execute_task_test{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let (_res) = execute_task_test.read(index)
     return (time_stamp=_res)
 end
+
+@view
+func get_current_recipient_index_to_check_transaction_delay{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}() -> (index : felt):
+    let (_res) = current_recipient_index_to_check_transaction_delay.read()
+    return (index=_res)
+end
+
+# //////////////////////////////////////////////////////////////////////////////////////
 
 @view
 func get_recipients_number{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
@@ -235,7 +313,7 @@ func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     assert multi_sig = 0  # not supported yet, post poc!
     assert_not_zero(expiry_date)
 
-    local newConfiguration : Configuration = (
+    local newConfiguration : Configuration = Configuration(
         send_amount=send_amount,
         send_type=send_type,
         equal_weights=equal_weights,
@@ -290,70 +368,72 @@ func compareValues{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
     return (is_le_felt)
 end
 
-# TODO: checkTransactions will iterate through all transactions and isTransactionReady call for each
-@view
-func checkTransactions{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    size : felt
-) -> (res : felt):
-    alloc_locals
-
-    if size == 0:
-        let (res) = is_tx_ready.read(0)
-        return (res=res)
-    else:
-        # do the business here!
-        # check each element and do what ever with it
-        let (_index) = temp_recipients_index.read()
-        let (_is_tx_ready) = is_transaction_ready(_index)
-        is_tx_ready.write(_index, _is_tx_ready)
-        temp_recipients_index.write(_index + 1)
-    end
-    let (_result) = traverse_recipients_map(size=size - 1)
-
-    return (res=_result)
-end
-
-@view
-func recipientAddress{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    index : felt
-) -> (bool : felt):
-    let (_recipient) = recipients.read(index)
-    return (_recipient.address)
-end
-
 # only delayed transactions, no recurring ones yet, hopefully soon!
 @view
 func is_transaction_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     index : felt
 ) -> (is_le_felt : felt):
     alloc_locals
+    let is_le_felt = 0
     # todo check config is set
-    let (_blockTimestamp) = get_block_timestamp()
+    let (_blocktimestamp) = get_block_timestamp()
     let (_recipient) = recipients.read(index)
-    let (is_le_felt) = is_le(_recipient.transaction_delay, _blockTimestamp)
+    let (is_le_felt) = is_le(_recipient.transaction_delay, _blocktimestamp)
+    return (is_le_felt)
+end
+# only delayed transactions, no recurring ones yet, hopefully soon!
+@view
+func is_recipient_ready{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    transaction_delay : felt
+) -> (is_le_felt : felt):
+    alloc_locals
+    let is_le_felt = 0
+    # todo check config is set
+    let (_blocktimestamp) = get_block_timestamp()
+    let (is_le_felt) = is_le(transaction_delay, _blocktimestamp)
     return (is_le_felt)
 end
 
-@external
-func traverse_recipients_map{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    size
-) -> (res : felt):
-    alloc_locals
+# @external
+# func check_recipients_transactions_delays{
+#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+# }(size : felt, _index : felt) -> (res : felt):
+#     alloc_locals
+#     let _result = 0
+#     if size == 0:
+#         let (res) = recipients_transactions_delay.read(0)
+#         return (res=res)
+#     else:
+#         # do the business here!
+#         # check each element and do what ever with it
+#         # let (_index) = temp_recipients_index.read()
 
-    if size == 0:
-        let (res) = recipients_transactions_delay.read(0)
-        return (res=res)
-    else:
-        # do the business here!
-        # check each element and do what ever with it
-        let (_index) = temp_recipients_index.read()
-        let (_recipients) = recipients.read(_index)
-        recipients_transactions_delay.write(_index, _recipients.transaction_delay)
-        temp_recipients_index.write(_index + 1)
+# let (_recipients) = recipients.read(_index)
+#         let (_is_transaction_ready) = is_transaction_ready(_index)
+#         recipients_transactions_delay.write(_index, _is_transaction_ready)
+#         let (_state) = get_transaction_state(
+#             _is_transaction_ready, PENDING_STATE, READY_FOR_EXECUTION_STATE
+#         )
+#         # update demux transaction state, todo: make sure no duplicate addresses entry
+#         demux_state.write(_index, TransactionState(address=_recipients.address, state=_state))  # for testing we set to 1, once signature is done then we can set 1 then as expected
+#     end
+
+# let (_result) = check_recipients_transactions_delays(size=size - 1, _index=_index + 1)
+
+# return (res=_result)
+# end
+
+@view
+func get_transaction_state(
+    _is_transaction_ready : felt, current_state : felt, next_step : felt
+) -> (new_state : felt):
+    if _is_transaction_ready == 0:
+        return (new_state=current_state)
     end
-    let (_result) = traverse_recipients_map(size=size - 1)
-
-    return (res=_result)
+    if _is_transaction_ready == 1:
+        return (new_state=next_step)
+    end
+    return (new_state=FAILED_STATE)
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
@@ -364,40 +444,41 @@ func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 ):
     alloc_locals
 
-    # Make sure yagi_router is calling
-    let (_caller_address) = get_caller_address()
-    assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
+    # # # Make sure yagi_router is calling
+    # # let (_caller_address) = get_caller_address()
+    # # assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
 
-    # Current assumption is all recipients are ordered by transaction_delay, who orders them is yet to be
-    # finalised, more likely demux should take care of that but for now the assumption isthe list is ordered.
-    # current_recipient_index_to_check_transaction_delay stores the current transaction that is needed to use so it can be checked
-    # (corresponding recipient's transaction delay)
+    # # Current assumption is all recipients are ordered by transaction_delay, who orders them is yet to be
+    # # finalised, more likely demux should take care of that but for now the assumption isthe list is ordered.
+    # # current_recipient stores the current recipient that is needed to use so it can be checked
+    # # (corresponding recipient's transaction delay)
 
-    let (_current_recipient_to_check) = current_recipient_index_to_check_transaction_delay.read()
-    let (_recipients_number) = recipients_number.read()
-    # if there _current_recipient_to_check is = or > then there is a problem!
-    assert_not_equal(_current_recipient_to_check, _recipients_number)
-    let (_is_transaction_ready) = is_transaction_ready(_current_recipient_to_check)
+    let (_current_recipient) = current_recipient.read()
+    let (_is_transaction_ready) = is_recipient_ready(_current_recipient.transaction_delay)
 
-    if _is_transaction_ready == 1:
-        current_recipient_index_to_check_transaction_delay.write(_current_recipient_to_check + 1)
-        return (1)
-    end
-
-    return (0)
+    return (_is_transaction_ready)
 end
 
-@view
-func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+@external
+func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ) -> (block_time : felt):
     # Make sure yagi_router is calling
-    let (_caller_address) = get_caller_address()
-    assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
+    # let (_caller_address) = get_caller_address()
+    # assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
     # FOR TESTING
-    let (_current_recipient_to_check) = current_recipient_index_to_check_transaction_delay.read()
-    let (_blockTimestamp) = get_block_timestamp()
-    execute_task_test.write(_current_recipient_to_check, _blockTimestamp)
 
-    return ()
+    let _blockTimestamp = 0
+    let (_blockTimestamp) = get_block_timestamp()
+    let (_current_recipient) = current_recipient.read()
+
+    execute_task_test.write(_current_recipient.address, _blockTimestamp)
+
+    let (_index) = current_index.read()
+    let (next_recipient) = recipients.read(_index + 1)
+    current_recipient.write(next_recipient)
+    current_index.write(_index + 1)
+
+    return (block_time=_blockTimestamp)
 end
 
 # //////////////////////////////////////////////////////////////////////////////////////
