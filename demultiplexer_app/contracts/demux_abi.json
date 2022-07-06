@@ -508,6 +508,18 @@
     },
     {
         "inputs": [],
+        "name": "get_current_index",
+        "outputs": [
+            {
+                "name": "index",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "get_recipients_number",
         "outputs": [
             {
@@ -642,6 +654,18 @@
     },
     {
         "inputs": [],
+        "name": "get_blocktime",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "is_configuration_set",
         "outputs": [
             {
@@ -727,26 +751,6 @@
     {
         "inputs": [
             {
-                "name": "size",
-                "type": "felt"
-            },
-            {
-                "name": "_index",
-                "type": "felt"
-            }
-        ],
-        "name": "check_recipients_transactions_delays",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "name": "_is_transaction_ready",
                 "type": "felt"
             },
@@ -767,26 +771,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "size",
-                "type": "felt"
-            },
-            {
-                "name": "_index",
-                "type": "felt"
-            }
-        ],
-        "name": "recipients_execution_tasks",
-        "outputs": [
-            {
-                "name": "res",
-                "type": "felt"
-            }
-        ],
         "type": "function"
     },
     {

@@ -212,6 +212,14 @@ func get_current_recipient_index_to_check_transaction_delay{
     return (index=_res)
 end
 
+@view
+func get_current_index{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    index : felt
+):
+    let (_res) = current_index.read()
+    return (index=_res)
+end
+
 # //////////////////////////////////////////////////////////////////////////////////////
 
 @view
@@ -323,6 +331,14 @@ func set_configuration{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 
     configuration.write(newConfiguration)
     return ()
+end
+
+@view
+func get_blocktime{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    res : felt
+):
+    let (_block_time) = get_block_timestamp()
+    return (_block_time)
 end
 
 @view
@@ -448,17 +464,29 @@ func probe_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     # # let (_caller_address) = get_caller_address()
     # # assert _caller_address = YAGI_ROUTER_GOERLI_ADDRESS
 
+    let (_recipients_number) = recipients_number.read()
+    if _recipients_number == 0:
+        return (0)
+    end
+
     # # Current assumption is all recipients are ordered by transaction_delay, who orders them is yet to be
     # # finalised, more likely demux should take care of that but for now the assumption isthe list is ordered.
     # # current_recipient stores the current recipient that is needed to use so it can be checked
     # # (corresponding recipient's transaction delay)
 
     let (_current_recipient) = current_recipient.read()
+    let (_index) = current_index.read()
+
+    if _recipients_number == _index:
+        return (0)
+    end
+
     let (_is_transaction_ready) = is_recipient_ready(_current_recipient.transaction_delay)
 
     return (_is_transaction_ready)
 end
 
+# called by demuxy (demux yagi router)
 @external
 func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     ) -> (block_time : felt):
@@ -475,6 +503,9 @@ func execute_demux_transfers{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 
     let (_index) = current_index.read()
     let (next_recipient) = recipients.read(_index + 1)
+    # if we dont have anymore recipients we want to get a date in the future that will not trigger probe task =1
+    #  need to check later on when we need to reset and restart!!
+
     current_recipient.write(next_recipient)
     current_index.write(_index + 1)
 

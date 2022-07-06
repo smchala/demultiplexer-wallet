@@ -165,13 +165,13 @@ end
 # //////////////////////////////////////////////////////////////////////////////////////
 # Helper functions
 
-func assert_owner{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    alloc_locals
-    let (_owner) = owner.read()
-    let (_caller) = get_caller_address()
-    assert _owner = _caller  # is _caller the contract address or the acccount that is calling the contract
-    return ()
-end
+# func assert_owner{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+#     alloc_locals
+#     let (_owner) = owner.read()
+#     let (_caller) = get_caller_address()
+#     assert _owner = _caller  # is _caller the contract address or the acccount that is calling the contract
+#     return ()
+# end
 
 # //////////////////////////////////////////////////////////////////////////////////////
 # Contracts interfaces
@@ -181,6 +181,8 @@ namespace IContractDemux:
     func probe_demux_transfers() -> (bool : felt):
     end
     func execute_demux_transfers() -> (block_time : felt):
+    end
+    func get_blocktime() -> (block_time : felt):
     end
 end
 
